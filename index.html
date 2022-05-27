@@ -56,6 +56,20 @@
           checkArity: false,
         }
       );
+      $("#terminal").terminal({
+        name: function (name) {
+          this.push(
+            function (last_name) {
+              if (last_name) {
+                this.echo("Your name is " + name + " " + last_name).pop();
+              }
+            },
+            {
+              prompt: "last name: ",
+            }
+          );
+        },
+      });
     </script>
   </body>
 </html>
