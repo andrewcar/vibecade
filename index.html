@@ -13,7 +13,7 @@
       $("body").terminal(
         {
           hello: function () {
-            this.echo($("oh hey, what's up?"));
+            return "oh hey, what's up?";
           },
           cat: function () {
             this.echo($('<img src="https://placekitten.com/408/287">'));
