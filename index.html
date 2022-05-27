@@ -22,7 +22,7 @@
           //   this.echo(img);
           // },
           title: function () {
-            return fetch("https://google.com")
+            return fetch("https://www.google.com")
               .then((r) => r.text())
               .then((html) => html.match(/<title>([^>]+)<\/title>/)[1]);
           },
