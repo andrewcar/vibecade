@@ -56,6 +56,19 @@
           checkArity: false,
         }
       );
+      $(function () {
+        $("#terminal").terminal("service.py", {
+          prompt: "[[;red;]>>> ]",
+        });
+      });
+
+      term.set_prompt(function (set_prompt) {
+        if (this.get_token()) {
+          set_prompt(this.login_name() + "@server$ ");
+        } else {
+          set_prompt("guest@server$ ");
+        }
+      });
     </script>
   </body>
 </html>
