@@ -15,12 +15,12 @@
           cat: function () {
             this.echo($('<img src="https://placekitten.com/408/287">'));
           },
-          cat: function (width, height) {
-            const img = $(
-              '<img src="https://placekitten.com/' + width + "/" + height + '">'
-            );
-            this.echo(img);
-          },
+          // cat: function (width, height) {
+          //   const img = $(
+          //     '<img src="https://placekitten.com/' + width + "/" + height + '">'
+          //   );
+          //   this.echo(img);
+          // },
           title: function () {
             return fetch("https://terminal.jcubic.pl")
               .then((r) => r.text())
