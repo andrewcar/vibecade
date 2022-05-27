@@ -12,15 +12,20 @@
     <script>
       $("body").terminal(
         {
-          hello: function (what) {
-            this.echo("Hello, " + what + ". Wellcome to this terminal.");
+          cat: function (width, height) {
+            const img = $(
+              '<img src="https://placekitten.com/' + width + "/" + height + '">'
+            );
+            this.echo(img);
           },
-          cat: function () {
-            this.echo($('<img src="https://placekitten.com/408/287">'));
+          title: function () {
+            return fetch("https://terminal.jcubic.pl")
+              .then((r) => r.text())
+              .then((html) => html.match(/<title>([^>]+)<\/title>/)[1]);
           },
         },
         {
-          greetings: "andrewOS",
+          greetings: "My First JavaScript Terminal\n",
         }
       );
     </script>
