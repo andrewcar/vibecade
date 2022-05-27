@@ -12,6 +12,9 @@
     <script>
       $("body").terminal(
         {
+          cat: function () {
+            this.echo($('<img src="https://placekitten.com/408/287">'));
+          },
           cat: function (width, height) {
             const img = $(
               '<img src="https://placekitten.com/' + width + "/" + height + '">'
