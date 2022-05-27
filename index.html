@@ -22,7 +22,7 @@
           //   this.echo(img);
           // },
           title: function () {
-            return fetch("https://www.google.com")
+            return fetch("https://terminal.jcubic.pl")
               .then((r) => r.text())
               .then((html) => html.match(/<title>([^>]+)<\/title>/)[1]);
           },
