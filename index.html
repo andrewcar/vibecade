@@ -1,41 +1,16 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://unpkg.com/jquery.terminal/js/jquery.terminal.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/jquery.terminal/css/jquery.terminal.min.css"
-    />
-  </head>
-  <body>
-    <script>
-      $("body").terminal(
-        {
-          hello: function (what) {
-            this.echo("Hello, " + what + ". Wellcome to this terminal.");
-          },
-        },
-        {
-          greetings: "My First Web Terminal",
-        }
-      );
-
-      $("body").terminal({
-        cat: function () {
-          this.echo($('<img src="https://placekitten.com/408/287">'));
-        },
-      });
-
-      $("body").terminal({
-        cat: function (width, height) {
-          const img = $(
-            '<img src="https://placekitten.com/' + width + "/" + height + '">'
-          );
-          this.pause();
-          this.echo(img);
-        },
-      });
-    </script>
-  </body>
-</html>
+<div class="tv">
+  <div id="terminal"></div>
+  <div class="collection external terminal">
+    See Also:
+    <a href="https://codepen.io/collection/AeGGxz" target="top"
+      >Vintage Screen Effects</a
+    >
+    and
+    <a href="https://codepen.io/collection/Mgrkmw" target="t"
+      >Terminal Things</a
+    >
+    collections for inspiration
+  </div>
+  <div class="flicker"></div>
+  <div class="scanlines"></div>
+</div>
