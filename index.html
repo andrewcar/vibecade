@@ -48,7 +48,7 @@
           fuck: function (thing) {
             if (!thing) {
               this.read("\nYou okay?\n", (response) => {
-                if (response === "no") {
+                if (response.includes("no")) {
                   this.read("\nWho dis\n", (name) => {
                     this.echo("\nI love you, " + name + ".\n");
                   });
