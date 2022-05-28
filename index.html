@@ -51,16 +51,9 @@
               .then((html) => html.match(/<title>([^>]+)<\/title>/)[1]);
           },
           name: function (name) {
-            this.push(
-              function (last_name) {
-                if (last_name) {
-                  this.echo("Your name is " + name + " " + last_name).pop();
-                }
-              },
-              {
-                prompt: "last name: ",
-              }
-            );
+            this.read("last name: ", (last_name) => {
+              this.echo("Your name is " + name + " " + last_name);
+            });
           },
         },
         {
