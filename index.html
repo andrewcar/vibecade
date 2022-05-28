@@ -46,7 +46,7 @@
               .then((html) => html.match(/<title>([^>]+)<\/title>/)[1]);
           },
           fuck: function (thing) {
-            if (thing == "") {
+            if (!thing) {
               return "\nYou okay?";
             } else {
               this.read("What's your name? ", (name) => {
