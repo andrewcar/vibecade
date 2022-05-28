@@ -49,14 +49,14 @@
             if (!thing) {
               this.read("\nYou okay?\n\n", (response) => {
                 if (response === "no") {
-                  this.echo("I love you.");
+                  this.echo("\nI love you.\n");
                   this.read("\nWho dis\n\n", (name) => {
                     this.echo("\nI love you, " + name + ".\n\n");
                   });
                 } else if (response === "yes") {
-                  this.echo("Oh okay. Cool.");
+                  this.echo("\nOh okay. Cool.\n");
                 } else {
-                  this.echo("I only understand yes or no answers.");
+                  this.echo("\nI only understand yes or no answers.\n");
                 }
               });
             } else {
