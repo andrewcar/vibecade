@@ -14,17 +14,15 @@
       $("body").terminal(
         {
           hello: function () {
-            this.echo($("\nHello back.\n", { typing: true, delay: 100 }));
+            this.echo("\nHello back.\n", { typing: true, delay: 100 });
           },
           hey: function () {
-            this.echo($("\nHey there.\n", { typing: true, delay: 100 }));
+            this.echo("\nHey there.\n", { typing: true, delay: 100 });
           },
           help: function () {
             this.echo(
-              $(
-                "\n\n. . . . . . . . . . . . . .\n. . . . . .about. . . . . .backstory\n. . . . . . . . . . . . . .\n\n\n. . . . . . . . . . . . . .\n. . . . . .contact. . . . .digits\n. . . . . . . . . . . . . .\n\n\n. . . . . . . . . . . . . .\n. . . . . .cat. . . . . . .cats\n. . . . . . . . . . . . .\n\n\n",
-                { typing: true, delay: 100 }
-              )
+              "\n\n. . . . . . . . . . . . . .\n. . . . . .about. . . . . .backstory\n. . . . . . . . . . . . . .\n\n\n. . . . . . . . . . . . . .\n. . . . . .contact. . . . .digits\n. . . . . . . . . . . . . .\n\n\n. . . . . . . . . . . . . .\n. . . . . .cat. . . . . . .cats\n. . . . . . . . . . . . .\n\n\n",
+              { typing: true, delay: 100 }
             );
           },
           about: function () {
