@@ -47,17 +47,17 @@
           },
           fuck: function (thing) {
             if (!thing) {
-              this.read("\nYou okay?\n", (response) => {
+              this.read("\nYou okay?\n\n", (response) => {
                 if (response.includes("no")) {
-                  this.read("\nWho dis\n", (name) => {
-                    this.echo("\nI love you, " + name + ".\n");
+                  this.read("\nWho dis\n\n", (name) => {
+                    this.echo("\nI love you, " + name + ".\n\n");
                   });
                 }
               });
             } else {
-              this.read("\nWhat's your name?\n", (name) => {
+              this.read("\nWhat's your name?\n\n", (name) => {
                 this.echo(
-                  "\nNo, " + name + ". I think you love " + thing + ".\n"
+                  "\nNo, " + name + ". I think you love " + thing + ".\n\n"
                 );
               });
             }
