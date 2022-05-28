@@ -47,12 +47,9 @@
           },
           fuck: function (thing) {
             if (!thing) {
-              this.read("\nYou okay?\n\n", (response) => {
+              this.read("\nYou okay?\n", (response) => {
                 if (response === "no") {
                   this.echo("\nI love you.\n");
-                  this.read("\nWho dis\n\n", (name) => {
-                    this.echo("\nI love you, " + name + ".\n\n");
-                  });
                 } else if (response === "yes") {
                   this.echo("\nOh okay. Cool.\n");
                 } else {
