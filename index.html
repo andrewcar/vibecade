@@ -48,10 +48,12 @@
           fuck: function (thing) {
             if (!thing) {
               this.read("\nYou okay?\n\n", (response) => {
-                if (response.includes("no")) {
+                if (response === "no") {
                   this.read("\nWho dis\n\n", (name) => {
                     this.echo("\nI love you, " + name + ".\n\n");
                   });
+                } else {
+                  this.echo("I love you.");
                 }
               });
             } else {
