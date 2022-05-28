@@ -49,7 +49,7 @@
             if (!thing) {
               this.read("\nYou okay?\n\n", (response) => {
                 if (response === "no") {
-                  this.echo("\nI love you.\n");
+                  this.echo("\nI love you.\n", { typing: true, delay: 200 });
                 } else if (response === "yes") {
                   this.echo("\nOh okay. Cool.\n");
                 } else {
