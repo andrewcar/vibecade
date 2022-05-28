@@ -52,10 +52,17 @@
           },
         },
         {
-          // greetings: "andrewOS\n",
+          greetings: "andrewOS\n",
           checkArity: false,
         }
       );
+      $("#terminal").terminal({
+        name: function (name) {
+          this.read("last name: ", (last_name) => {
+            this.echo("Your name is " + name + " " + last_name);
+          });
+        },
+      });
       $("#terminal").terminal({
         name: function (name) {
           this.push(
