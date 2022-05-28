@@ -58,9 +58,13 @@
               });
             } else {
               this.read("\nWhat's your name?\n\n", (name) => {
-                this.echo(
-                  "\nNo, " + name + ". I think you love " + thing + ".\n\n"
-                );
+                if (thing === "you") {
+                  this.echo("\nI love you, too, " + name + ".");
+                } else {
+                  this.echo(
+                    "\nNo, " + name + ". I think you love " + thing + ".\n\n"
+                  );
+                }
               });
             }
           },
