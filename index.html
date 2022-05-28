@@ -45,9 +45,9 @@
               .then((r) => r.text())
               .then((html) => html.match(/<title>([^>]+)<\/title>/)[1]);
           },
-          name: function (name) {
-            this.read("last name: ", (last_name) => {
-              this.echo("Your name is " + name + " " + last_name);
+          fuck: function (thing) {
+            this.read("What's your name?", (name) => {
+              this.echo("No, " + name + ", fuck you. I love " + thing);
             });
           },
         },
