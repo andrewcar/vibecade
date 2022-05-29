@@ -49,15 +49,25 @@
           },
           fuck: function (thing) {
             if (!thing) {
-              this.read($('\nYou okay?\n\n', (response) => {
-                if (response === 'no') {
-                  this.echo($('\nI love you.\n', { typing: true, delay: 69 });
-                } else if (response === 'yes') {
-                  this.echo($('\nOh okay... Cool.\n', { typing: true, delay: 69 });    
-                } else {
-                  this.echo($('\nI only understand yes or no answers.\n', { typing: true, delay: 69 });
-                }
-              });
+              this.read(
+                "\nYou okay?\n\n",
+                (response) => {
+                  if (response === "no") {
+                    this.echo("\nI love you.\n", { typing: true, delay: 100 });
+                  } else if (response === "yes") {
+                    this.echo("\nOh okay. Cool.\n", {
+                      typing: true,
+                      delay: 100,
+                    });
+                  } else {
+                    this.echo("\nI only understand yes or no answers.\n", {
+                      typing: true,
+                      delay: 100,
+                    });
+                  }
+                },
+                { typing: true, delay: 100 }
+              );
             } else {
               this.read("\nWhat's your name?\n\n", (name) => {
                 if (thing === "you") {
