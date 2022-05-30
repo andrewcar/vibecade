@@ -54,7 +54,6 @@
             if (!thing) {
               this.read(
                 "\nYou okay?\n\n",
-                { typing: true, delay: 69 },
                 (response) => {
                   if (response === "no") {
                     this.echo("\nI love you.\n", { typing: true, delay: 69 });
@@ -69,7 +68,8 @@
                       delay: 69,
                     });
                   }
-                }
+                },
+                { typing: true, delay: 69 }
               );
             } else {
               this.read("\nWhat's your name?\n\n", (name) => {
