@@ -3,7 +3,7 @@ body {
   font-family: "Share Tech Mono", monospace;
   font-size: 26px;
   font-weight: 300;
-  text-shadow: 0 0 5px rgba(219, 14, 21, 0.8);
+  /* text-shadow: 0 0 5px rgba(219, 14, 21, 0.8); */
   background: url(https://image.ibb.co/h2hLAJ/bg.png) #000;
   position: relative;
   height: 100vh;
