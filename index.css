@@ -195,6 +195,6 @@ body::after {
   background: rgba(49, 45, 45, 0.1);
   opacity: 0;
   pointer-events: none;
-  -webkit-animation: flicker 0.15s infinite, steady 4s;
-  animation: flicker 0.15s infinite, steady 4s;
+  -webkit-animation: flicker 0.15s infinite, steady 2s;
+  animation: flicker 0.15s infinite, steady 2s;
 }
