@@ -1,12 +1,5 @@
-.image-replacement {
-  text-indent: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
 body {
   color: #db0e15;
-  font-family: "Share Tech Mono", monospace;
   font-size: 26px;
   font-weight: 300;
   text-shadow: 0 0 5px rgba(219, 14, 21, 0.8);
