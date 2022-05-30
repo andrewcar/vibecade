@@ -1,202 +1,50 @@
-body {
-  color: #db0e15;
-  font-family: "Share Tech Mono", monospace;
-  font-size: 26px;
-  font-weight: 300;
-  text-shadow: 0 0 5px rgba(219, 14, 21, 0.8);
-  background: url(https://image.ibb.co/h2hLAJ/bg.png) #000;
-  position: relative;
-  height: 100vh;
+@import "compass";
+@import "compass/layout";
+
+@import url(https://fonts.googleapis.com/css?family=VT323);
+
+* {
+  box-sizing: border-box;
+  font: inherit;
 }
 
-.flash {
-  -webkit-animation: flashText 1s ease-out alternate infinite;
-  animation: flashText 1s ease-out alternate infinite;
+html {
+  @include stretch(0, 0, 0, 0);
+  background-color: #000000;
+  font-family: "VT323", terminal, monospace;
 }
 
-@-webkit-keyframes flashText {
-  0% {
-    opacity: 0.3;
-  }
-  100% {
-    opacity: 1;
-  }
+.content {
+  @include stretch(1.5em, 1.5em, 1.5em, 1.5em);
+  color: #fbfbfb;
+  font-size: 2.5rem;
+  font-size: 6vmin;
+  white-space: pre-wrap;
+  overflow: hidden;
 }
 
-@keyframes flashText {
-  0% {
-    opacity: 0.3;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@-webkit-keyframes flicker {
-  0% {
-    opacity: 0.86139;
-  }
-  5% {
-    opacity: 0.12793;
-  }
-  10% {
-    opacity: 0.36759;
-  }
-  15% {
-    opacity: 0.9766;
-  }
-  20% {
-    opacity: 0.61364;
-  }
-  25% {
-    opacity: 0.94477;
-  }
-  30% {
-    opacity: 0.57811;
-  }
-  35% {
-    opacity: 0.03416;
-  }
-  40% {
-    opacity: 0.21835;
-  }
-  45% {
-    opacity: 0.62054;
-  }
-  50% {
-    opacity: 0.89452;
-  }
-  55% {
-    opacity: 0.89997;
-  }
-  60% {
-    opacity: 0.37872;
-  }
-  65% {
-    opacity: 0.04929;
-  }
-  70% {
-    opacity: 0.14477;
-  }
-  75% {
-    opacity: 0.27512;
-  }
-  80% {
-    opacity: 0.84701;
-  }
-  85% {
-    opacity: 0.85952;
-  }
-  90% {
-    opacity: 0.76553;
-  }
-  95% {
-    opacity: 0.91372;
-  }
-  100% {
-    opacity: 0.05536;
-  }
-}
-
-@keyframes flicker {
-  0% {
-    opacity: 0.86139;
-  }
-  5% {
-    opacity: 0.12793;
-  }
-  10% {
-    opacity: 0.36759;
-  }
-  15% {
-    opacity: 0.9766;
-  }
-  20% {
-    opacity: 0.61364;
-  }
-  25% {
-    opacity: 0.94477;
-  }
-  30% {
-    opacity: 0.57811;
-  }
-  35% {
-    opacity: 0.03416;
-  }
-  40% {
-    opacity: 0.21835;
-  }
-  45% {
-    opacity: 0.62054;
-  }
-  50% {
-    opacity: 0.89452;
-  }
-  55% {
-    opacity: 0.89997;
-  }
-  60% {
-    opacity: 0.37872;
-  }
-  65% {
-    opacity: 0.04929;
-  }
-  70% {
-    opacity: 0.14477;
-  }
-  75% {
-    opacity: 0.27512;
-  }
-  80% {
-    opacity: 0.84701;
-  }
-  85% {
-    opacity: 0.85952;
-  }
-  90% {
-    opacity: 0.76553;
-  }
-  95% {
-    opacity: 0.91372;
-  }
-  100% {
-    opacity: 0.05536;
-  }
-}
-
-@-webkit-keyframes steady {
-  from {
-    background: rgba(255, 230, 230, 0.1);
-  }
-  to {
-    background: rgba(49, 45, 45, 0.1);
-  }
-}
-
-@keyframes steady {
-  from {
-    background: rgba(255, 230, 230, 0.1);
-  }
-  to {
-    background: rgba(49, 45, 45, 0.1);
-  }
-}
-
-body::after {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: rgba(49, 45, 45, 0.1);
-  opacity: 0;
-  pointer-events: none;
-  -webkit-animation: flicker 0.15s infinite, steady 2s;
-  animation: flicker 0.15s infinite, steady 2s;
+.screen {
+  @include stretch(1em, 1em, 1em, 1em);
+  animation: wobble 0.0825s infinite alternate steps(4);
+  background-image: linear-gradient(
+      0deg,
+      #000 0%,
+      rgba(0, 0, 0, 0) 50%,
+      #000 100%
+    ),
+    linear-gradient(
+      90deg,
+      #000 0%,
+      #f00 16.6%,
+      #000 33.3%,
+      #0f0 50%,
+      #000 66.6%,
+      #00f 83.3%,
+      #000 100%
+    );
+  background-size: 0.3em 0.2em, 4px 100%;
+  mix-blend-mode: color-burn;
+  will-change: contents; // fix blending with animation
 }
 
 @keyframes wobble {
