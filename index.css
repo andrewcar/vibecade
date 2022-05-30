@@ -198,3 +198,12 @@ body::after {
   -webkit-animation: flicker 0.15s infinite, steady 2s;
   animation: flicker 0.15s infinite, steady 2s;
 }
+
+@keyframes wobble {
+  0% {
+    transform: skew(0.2deg);
+  }
+  100% {
+    transform: skew(-0.2deg);
+  }
+}
