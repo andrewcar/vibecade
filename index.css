@@ -8,3 +8,8 @@ body {
   position: relative;
   height: 100vh;
 }
+
+.flash {
+  -webkit-animation: flashText 1s ease-out alternate infinite;
+  animation: flashText 1s ease-out alternate infinite;
+}
