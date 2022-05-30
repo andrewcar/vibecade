@@ -1,4 +1,4 @@
-/* body {
+body {
   color: #db0e15;
   font-family: "Share Tech Mono", monospace;
   font-size: 26px;
@@ -7,7 +7,7 @@
   background: url(https://image.ibb.co/h2hLAJ/bg.png) #000;
   position: relative;
   height: 100vh;
-} */
+}
 
 .flash {
   -webkit-animation: flashText 1s ease-out alternate infinite;
