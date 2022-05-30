@@ -13,3 +13,21 @@ body {
   -webkit-animation: flashText 1s ease-out alternate infinite;
   animation: flashText 1s ease-out alternate infinite;
 }
+
+@-webkit-keyframes flashText {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes flashText {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
