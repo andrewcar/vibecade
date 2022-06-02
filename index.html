@@ -22,7 +22,7 @@
           },
           help: function () {
             this.echo(
-              '\nThe available known commands are "about," "cat," "contact," "surprise" and "github."\n'
+              '\nThe available known commands are about, cat, contact, github, help, instagram, linkedin, medium and surprise."\n'
             );
           },
           about: function () {
@@ -31,14 +31,14 @@
               { typing: true, delay: 69 }
             );
           },
-          contact: function () {
-            return "\n(954)292-5454\n";
-          },
           surprise: function () {
             this.echo($('\n<img src="https://i.imgur.com/6JRUWIq.png">\n'));
           },
           cat: function () {
             this.echo($('\n<img src="https://placekitten.com/408/287">\n'));
+          },
+          contact: function () {
+            return "\n(954)292-5454\n";
           },
           github: function () {
             this.echo("\n[[!;;;;https://github.com/andrewcar]GitHub]\n");
