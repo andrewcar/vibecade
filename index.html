@@ -22,7 +22,8 @@
           },
           help: function () {
             this.echo(
-              '\nThe available known commands are about, cat, contact, github, help, instagram, linkedin, medium and surprise."\n'
+              "\nThe available known commands are about, cat, contact, github, help, instagram, linkedin, medium and surprise.\n",
+              { typing: true, delay: 69 }
             );
           },
           about: function () {
@@ -38,23 +39,31 @@
             this.echo($('\n<img src="https://placekitten.com/408/287">\n'));
           },
           contact: function () {
-            return "\n(954)292-5454\n";
+            return "\n(954)292-5454\n", { typing: true, delay: 69 };
           },
           github: function () {
-            this.echo("\n[[!;;;;https://github.com/andrewcar]GitHub]\n");
+            this.echo("\n[[!;;;;https://github.com/andrewcar]GitHub]\n", {
+              typing: true,
+              delay: 69,
+            });
           },
           instagram: function () {
             this.echo(
-              "\n[[!;;;;https://www.instagram.com/andrewsphone]Instagram]\n"
+              "\n[[!;;;;https://www.instagram.com/andrewsphone]Instagram]\n",
+              { typing: true, delay: 69 }
             );
           },
           linkedin: function () {
             this.echo(
-              "\n[[!;;;;https://www.linkedin.com/in/andrew-carvajal-09549538]Linkedin]\n"
+              "\n[[!;;;;https://www.linkedin.com/in/andrew-carvajal-09549538]Linkedin]\n",
+              { typing: true, delay: 69 }
             );
           },
           medium: function () {
-            this.echo("\n[[!;;;;https://medium.com/@andrewcarvajal]Medium]\n");
+            this.echo("\n[[!;;;;https://medium.com/@andrewcarvajal]Medium]\n", {
+              typing: true,
+              delay: 69,
+            });
           },
           lola: function () {
             this.echo($('\n<img src="https://i.imgur.com/WzLhVEd.jpg">\n'));
