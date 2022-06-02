@@ -44,7 +44,11 @@
             this.echo("\n[[!;;;;https://github.com/andrewcar]GitHub]\n");
           },
           google: function () {
-            this.echo($('<a href="https://www.google.com"></a>'));
+            this.echo(
+              $(
+                '<a href="https://www.google.com" target="_blank" rel="noopener noreferrer"></a>'
+              )
+            );
           },
           instagram: function () {
             this.echo(
