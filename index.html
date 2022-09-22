@@ -22,7 +22,7 @@
           },
           help: function () {
             this.echo(
-              "\nThe available known commands are bored, cat, contact, cv, fox, github, help, linkedin, and medium.\n",
+              "\nThe available known commands are bored, cat, cv, email, fox, github, help, phone, linkedin, and medium.\n",
               { typing: true, delay: 69 }
             );
           },
@@ -38,8 +38,11 @@
           cat: function () {
             this.echo($('\n<img src="https://placekitten.com/408/287">\n'));
           },
-          contact: function () {
+          phone: function () {
             this.echo("\n(954) 292-5454\n", { typing: true, delay: 69 });
+          },
+          email: function () {
+            this.echo("\nandrew.carvajal@me.com\n", { typing: true, delay: 69 });
           },
           github: function () {
             this.echo(
