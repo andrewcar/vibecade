@@ -1,0 +1,11 @@
+.terminal {
+    --color: rgba(0, 200, 0, 0.99);
+    --glow: 1;
+  }
+  
+  @media screen and (min-width: 1200px) {
+    :root {
+      --size: 1.5;
+    }
+  }
+  
