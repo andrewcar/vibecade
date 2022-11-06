@@ -71,6 +71,12 @@
           louie: function () {
             this.echo($('\n<img src="https://i.imgur.com/aRtaFoo.jpg">\n'));
           },
+          ls: function () {
+            this.echo("\nYour old magic won't work here.");
+          },
+          marco: function () {
+            this.echo("\nPolo!");
+          },
           medium: function () {
             this.echo(
               "\n[[!;;;;https://medium.com/@andrewcarvajal]Medium]\n"
@@ -79,8 +85,14 @@
           name: function () {
             this.echo("\nAndrew Carvajal\n", { typing: true, delay: 69 });
           },
+          ping: function () {
+            this.echo("\npong");
+          },
           phone: function () {
             this.echo("\n(954) 292-5454\n", { typing: true, delay: 69 });
+          },
+          pwd: function () {
+            this.echo("\nYour old magic won't work here.");
           },
           ruleofthree: function () {
             this.echo(
@@ -100,6 +112,9 @@
             return fetch("https://terminal.jcubic.pl")
               .then((r) => r.text())
               .then((html) => html.match(/<title>([^>]+)<\/title>/)[1]);
+          },
+          vim: function () {
+            this.echo("\nYour old magic won't work here.");
           },
         },
         {
