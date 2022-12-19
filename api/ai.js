@@ -15,6 +15,5 @@ export default async function (req, res) {
         frequency_penalty: 0,
         presence_penalty: 0,
     });
-    const answer = response.data.choices[0].text;
-    return answer;
+    res.status(200).json({ result: response.data.choices[0].text });
 }
