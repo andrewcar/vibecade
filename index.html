@@ -153,13 +153,7 @@
       );
       return result;
       }
-      startTerminal()
-      .then((answer) => {
-        this.echo(answer, { typing: true, delay: 69 });
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+      startTerminal();
     </script>
   </body>
 </html>
