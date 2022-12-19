@@ -6,7 +6,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export default async function (req, res) {
-    const response = await openai.createCompletion({
+    const completion = await openai.createCompletion({
         model: "text-davinci-002",
         prompt: req.body.question,
         temperature: 0.7,
@@ -15,5 +15,5 @@ export default async function (req, res) {
         frequency_penalty: 0,
         presence_penalty: 0,
     });
-    res.status(200).json({ result: response.data.choices[0].text });
+    res.status(200).json({ result: completion.data.choices[0].text });
 }

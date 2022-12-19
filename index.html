@@ -13,7 +13,7 @@
   <body>
     <script>
       async function ask(question) {
-        const response = await fetch("/api/ai", {
+        const response = fetch("/api/ai", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
