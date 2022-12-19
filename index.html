@@ -12,7 +12,7 @@
   </head>
   <body>
     <script>
-      const { ask } = require("./ai.js");
+      import { ask } from "./ai.js"
       async function doAjax() {
         const result = await $("body").terminal(
         {
