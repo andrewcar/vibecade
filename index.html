@@ -46,17 +46,20 @@
                 { typing: true, delay: 69 }
               );
             } else {
-              const response = fetch("./api/ai", {
+              fetch("./api/ai", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ question: question }),
+              })
+              .then((response) => response.json())
+              .then((data) => {
+                this.echo(data.result, { typing: true, delay: 69 });
+              })
+              .catch((error) => {
+                console.log(error);
               });
-              const data = response.json();
-              this.echo(
-                data.result, { typing: true, delay: 69 }
-              );
             }
           },
           github: function () {
