@@ -47,15 +47,10 @@
                 { typing: true, delay: 69 }
               );
             } else {
-              $.ajax({
-                url: '/ask',
-                data: {
-                  question: question
-                },
-                success: function(answer) {
-                  this.echo(answer, { typing: true, delay: 69 });
-                }
-              });
+              const answer = ask(question);
+              this.echo(
+                answer, { typing: true, delay: 69 }
+              );
             }
           },
           github: function () {
