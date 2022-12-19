@@ -14,7 +14,7 @@
     <script>
       const { ask } = require("./ai.js");
       async function doAjax() {
-        $("body").terminal(
+        const result = await $("body").terminal(
         {
           bored: function () {
             this.echo(
@@ -138,8 +138,9 @@
           checkArity: false,
         }
       );
+      return result;
       }
-      return await doAjax();
+      doAjax();
     </script>
   </body>
 </html>
