@@ -4,6 +4,7 @@
     <title>andrewOS</title>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://unpkg.com/jquery.terminal/js/jquery.terminal.min.js"></script>
+    <script type="module" src="./ai.js"></script>
     <link
       rel="stylesheet"
       href="https://unpkg.com/jquery.terminal/css/jquery.terminal.min.css"
@@ -12,7 +13,6 @@
   </head>
   <body>
     <script>
-      import { ask } from "./ai.js"
       async function doAjax() {
         const result = await $("body").terminal(
         {
