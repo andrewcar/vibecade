@@ -2,12 +2,13 @@ import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
-  });
+});
 const openai = new OpenAIApi(configuration);
-async function ask(prompt) {
+
+export default async function ask(req, res) {
     const response = await openai.createCompletion({
         model: "text-davinci-002",
-        prompt,
+        prompt: req.body.question,
         temperature: 0.7,
         max_tokens: 256,
         top_p: 1,
@@ -17,7 +18,3 @@ async function ask(prompt) {
     const answer = response.data.choices[0].text;
     return answer;
 }
-// Export the "ask" function
-module.exports = {
-    ask,
-};

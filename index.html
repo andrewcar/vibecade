@@ -4,7 +4,6 @@
     <title>andrewOS</title>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://unpkg.com/jquery.terminal/js/jquery.terminal.min.js"></script>
-    <script type="module" src="./ai.js"></script>
     <link
       rel="stylesheet"
       href="https://unpkg.com/jquery.terminal/css/jquery.terminal.min.css"
@@ -47,9 +46,16 @@
                 { typing: true, delay: 69 }
               );
             } else {
-              const answer = ask(question);
+              const response = fetch("/api/generate", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ question: questionInput }),
+              });
+              const data = response.json();
               this.echo(
-                answer, { typing: true, delay: 69 }
+                data.result, { typing: true, delay: 69 }
               );
             }
           },
