@@ -59,7 +59,7 @@
             } else {
               ask(question)
               .then((answer) => {
-                return answer;
+                this.echo(answer, { typing: true, delay: 69 });
               })
               .catch((error) => {
                 console.log(error);
