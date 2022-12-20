@@ -25,6 +25,9 @@
         })
         .then(function (data) {
           return data.result;
+        })
+        .catch((error) => {
+          console.log(error);
         });
       }
       async function startTerminal() {
