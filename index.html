@@ -13,15 +13,19 @@
   <body>
     <script>
       async function ask(question) {
-        const response = await fetch("/api/ai.js", {
+        await fetch("/api/ai", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ question: question }),
+        })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          return data.result;
         });
-        const data = await response.json();
-        return data.result;
       }
       async function startTerminal() {
         const result = await $("body").terminal(
