@@ -20,10 +20,10 @@
           },
           body: JSON.stringify({ question: question }),
         })
-        .then(function (response) {
+        .then((response) => {
           return response.json();
         })
-        .then(function (data) {
+        .then((data) => {
           return data.result;
         })
         .catch((error) => {
