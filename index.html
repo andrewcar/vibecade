@@ -154,7 +154,7 @@
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// [BUILD] Build 244 [BUILD] ////\n///////////////////\n\nThe available known commands are bored, cat, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// [BUILD] Build 245 [BUILD] ////\n///////////////////\n\nThe available known commands are bored, cat, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -165,12 +165,16 @@
         startTerminal();
 
         setTimeout(function() {
-        let buildElem = $(".terminal div:contains('[BUILD] Build 244 [BUILD]')");
-        let updatedText = buildElem.text().replace(/\[BUILD\]/g, '').split('\n');
-        buildElem.css('font-size', '20px').text('');
-        buildElem.append(updatedText.map(line => $('<div>').text(line)));
+          let buildElem = $(".terminal div:contains('Build 245')");
+          let updatedText = buildElem.text().replace(/\[BUILD\]/g, '').trim().split('\n');
+          buildElem.empty();
+          updatedText.forEach(line => {
+            let newElem = $('<div>').text(line).css('font-size', '20px');
+            buildElem.append(newElem);
+          });
         }, 1000);
       });
+
 
     </script>
   </body>
