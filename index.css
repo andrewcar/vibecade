@@ -27,10 +27,10 @@
   }
 
   [data-custom-class='body_text'], [data-custom-class='body_text'] * {
-    font-size: 58px !important;
+    font-size: 18px !important;
   }
 
   [data-custom-class='link'], [data-custom-class='link'] * {
-    font-size: 18px !important;
+    font-size: 58px !important;
   }
 }
