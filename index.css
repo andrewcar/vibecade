@@ -10,7 +10,7 @@
 }
 
 @media (max-width: 600px) {
-  .terminal .build-number {
+  .terminal div:contains('[BUILD]') {
       font-size: 20px !important;
   }
 }
