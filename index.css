@@ -7,10 +7,13 @@
   :root {
     --size: 1.5;
   }
+  .terminal-output div:last-child {
+    font-size: var(--size) !important;
+  }
 }
 
 @media (max-width: 600px) {
-  .terminal div:contains('[BUILD]') {
-      font-size: 20px !important;
+  .terminal-output div:last-child {
+    font-size: 20px !important;
   }
 }
