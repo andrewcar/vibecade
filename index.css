@@ -9,9 +9,9 @@
   }
 }
 
-/* @media (max-width: 600px) {
+@media (max-width: 600px) {
   [data-custom-class='title'], [data-custom-class='title'] * {
-    font-size: 30px !important;
+    font-size: 60px !important;
   }
 
   [data-custom-class='subtitle'], [data-custom-class='subtitle'] * {
@@ -33,4 +33,4 @@
   [data-custom-class='link'], [data-custom-class='link'] * {
     font-size: 58px !important;
   }
-} */
+}
