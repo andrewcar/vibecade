@@ -19,11 +19,11 @@
   }
 
   [data-custom-class='heading_1'], [data-custom-class='heading_1'] * {
-    font-size: 54px !important;
+    font-size: 24px !important;
   }
 
   [data-custom-class='heading_2'], [data-custom-class='heading_2'] * {
-    font-size: 22px !important;
+    font-size: 52px !important;
   }
 
   [data-custom-class='body_text'], [data-custom-class='body_text'] * {
