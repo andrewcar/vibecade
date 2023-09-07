@@ -9,7 +9,7 @@
   }
 }
 
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   [data-custom-class='title'], [data-custom-class='title'] * {
     font-size: 30px !important;
   }
@@ -33,4 +33,4 @@
   [data-custom-class='link'], [data-custom-class='link'] * {
     font-size: 58px !important;
   }
-}
+} */
