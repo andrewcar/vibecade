@@ -154,7 +154,7 @@
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 238 ////\n///////////////////\n\nThe available known commands are bored, cat, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// [BUILD] Build 239 [BUILD] ////\n///////////////////\n\nThe available known commands are bored, cat, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -162,16 +162,12 @@
       }
       $(document).ready(function () {
         startTerminal();
-        
-        setTimeout(function() {
-          $(".terminal div:contains('//// Build 238 ////')").css('font-size', '20px');
-        }, 1000);
 
-        // setTimeout(function() {
-        //   let buildElem = $(".terminal div:contains('[BUILD] Build 235 [BUILD]')");
-        //   let updatedText = buildElem.text().replace('[BUILD]', '');
-        //   buildElem.css('font-size', '20px').text(updatedText);
-        // }, 1000);
+        setTimeout(function() {
+          let buildElem = $(".terminal div:contains('[BUILD] Build 239 [BUILD]')");
+          let updatedText = buildElem.text().replace('[BUILD]', '');
+          buildElem.css('font-size', '20px').text(updatedText);
+        }, 1000);
 
       });
     </script>
