@@ -15,11 +15,11 @@
   }
 
   [data-custom-class='subtitle'], [data-custom-class='subtitle'] * {
-    font-size: 48px !important;
+    font-size: 18px !important;
   }
 
   [data-custom-class='heading_1'], [data-custom-class='heading_1'] * {
-    font-size: 24px !important;
+    font-size: 54px !important;
   }
 
   [data-custom-class='heading_2'], [data-custom-class='heading_2'] * {
