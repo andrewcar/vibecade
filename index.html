@@ -154,7 +154,7 @@
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// [BUILD] Build 247 [BUILD] ////\n///////////////////\n\nThe available known commands are bored, cat, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 248 ////\n///////////////////\n\nThe available known commands are bored, cat, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -163,26 +163,6 @@
 
       $(document).ready(function () {
         startTerminal();
-
-        // SET UP OBSERVER TO WATCH FOR CHANGES
-        let observer = new MutationObserver(function(mutations) {
-          mutations.forEach(function(mutation) {
-            if (mutation.addedNodes) {
-                $(mutation.addedNodes).each(function() {
-                    if ($(this).text().includes('Build 247')) {
-                        let updatedText = $(this).text().replace(/\[BUILD\]/g, '').trim();
-                        $(this).text(updatedText);
-                    }
-                });
-            }
-          });
-        });
-
-        // CONFIGURE OBSERVER TO WATCH ALL CHILDREN OF TERMINAL
-        observer.observe($('.terminal')[0], {
-          childList: true,
-          subtree: true
-        });
       });
 
 
