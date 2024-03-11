@@ -13,20 +13,22 @@
   <body>
     <script>
       async function ask(question) {
-        try {
-          const response = await fetch("/api/ai", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ question: question }),
-          });
-          const data = await response.json();
-          return data.result; // Ensure this returned value is used by the caller
-        } catch (error) {
+        await fetch("/api/ai", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ question: question }),
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          return data.result;
+        })
+        .catch((error) => {
           console.log(error);
-          return "Error: " + error.message; // Return error message for feedback
-        }
+        });
       }
       async function startTerminal() {
         const result = await $("body").terminal(
@@ -57,16 +59,17 @@
           },
           ask: function (question) {
             if (!question) {
-              this.echo("\nYou'll need to ask a question to get an answer.\n\n", 
-              { typing: true, delay: 69 });
+              this.echo(
+                "\nYou'll need to ask a question to get an answer.\n\n", 
+                { typing: true, delay: 69 }
+              );
             } else {
               ask(question)
               .then((answer) => {
-                this.echo(answer || "Sorry, no answer was received.", { typing: true, delay: 69 });
+                this.echo(answer, { typing: true, delay: 69 });
               })
               .catch((error) => {
                 console.log(error);
-                this.echo("An error occurred: " + error.message, { typing: true, delay: 69 });
               });
             }
           },
@@ -151,7 +154,7 @@
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 250 ////\n///////////////////\n\nThe available known commands are bored, cat, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 251 ////\n///////////////////\n\nThe available known commands are bored, cat, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -166,7 +169,7 @@
           mutations.forEach(function(mutation) {
             if (mutation.addedNodes) {
                 $(mutation.addedNodes).each(function() {
-                    if ($(this).text().includes('Build 250')) {
+                    if ($(this).text().includes('Build 251')) {
                         let updatedText = $(this).text().replace(/\[BUILD\]/g, '').trim();
                         $(this).text(updatedText);
                     }
