@@ -163,6 +163,26 @@
 
       $(document).ready(function () {
         startTerminal();
+
+        // SET UP OBSERVER TO WATCH FOR CHANGES
+        let observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.addedNodes) {
+                $(mutation.addedNodes).each(function() {
+                    if ($(this).text().includes('Build 247')) {
+                        let updatedText = $(this).text().replace(/\[BUILD\]/g, '').trim();
+                        $(this).text(updatedText);
+                    }
+                });
+            }
+          });
+        });
+
+        // CONFIGURE OBSERVER TO WATCH ALL CHILDREN OF TERMINAL
+        observer.observe($('.terminal')[0], {
+          childList: true,
+          subtree: true
+        });
       });
 
 
