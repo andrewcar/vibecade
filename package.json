@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "openai": "^3.1.0"
+    "jquery.terminal": "^2.39.3",
+    "openai": "^4.29.2"
   }
 }
