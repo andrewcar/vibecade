@@ -32,7 +32,7 @@
         });
       }
 
-      function typeText(term, text, delay = 100) {
+      function typeText(term, text, delay = 100, callback) {
         let i = 0;
         function type() {
           if (i < text.length) {
@@ -40,9 +40,9 @@
             i++;
             setTimeout(type, delay);
           } else {
-            term.echo(""); // Echo an empty string to simulate the Enter key
-            term.set_command(""); // Clear the command to be ready for the next input
-            term.resume(); // Resume the terminal if it was paused
+            if (callback && typeof callback === 'function') {
+              callback();
+            }
           }
         }
         type();
@@ -127,7 +127,12 @@
             typeText(this, "\n[[!;;;;https://medium.com/@andrewcarvajal]Medium]\n", 69);
           },
           name: function () {
-            typeText(this, "\nAndrew Carvajal\n", 69);
+            this.pause(); // Pause the terminal to prevent user input during animation
+            var self = this;
+            typeText(self, "\nAndrew Carvajal\n", 69, function() {
+              self.set_command(""); // Clear the command line
+              self.resume(); // Resume the terminal for new user input
+            });
           },
           clear: function () {
             this.clear();
@@ -165,7 +170,7 @@
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 259 ////\n///////////////////\n\nThe available known commands are bored, cat, clear, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 260 ////\n///////////////////\n\nThe available known commands are bored, cat, clear, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -180,7 +185,7 @@
           mutations.forEach(function(mutation) {
             if (mutation.addedNodes) {
                 $(mutation.addedNodes).each(function() {
-                    if ($(this).text().includes('Build 259')) {
+                    if ($(this).text().includes('Build 260')) {
                         let updatedText = $(this).text().replace(/\[BUILD\]/g, '').trim();
                         $(this).text(updatedText);
                     }
