@@ -59,19 +59,13 @@
         const result = await $("body").terminal(
         {
           boredgames: function () {
-			this.pause();
-			typeText(this, "\n[[!;;;;https://apps.apple.com/us/app/bored-games/id1644618221]Bored Games]\n", 69, () => {
-				this.resume();
-			});
+			this.echo("\n[[!;;;;https://apps.apple.com/us/app/bored-games/id1644618221]Bored Games]\n");
           },
           cat: function () {
             this.echo($('\n<img src="https://placekitten.com/408/287">\n'));
           },
           cv: function () {
-			this.pause();
-			typeText(this, "\n[[!;;;;https://andrewos.com/docs/cv.pdf]CV]\n", 69, () => {
-				this.resume();
-			});
+			this.echo("\n[[!;;;;https://andrewos.com/docs/cv.pdf]CV]\n");
           },
           dob: function () {
 			this.pause();
@@ -86,10 +80,7 @@
 			});
           },
           fox: function () {
-			this.pause();
-			typeText(this, "\n[[!;;;;https://apps.apple.com/us/app/fox-sports-watch-live/id294056623]Fox Sports]\n", 69, () => {
-				this.resume();
-			});
+			this.echo("\n[[!;;;;https://apps.apple.com/us/app/fox-sports-watch-live/id294056623]Fox Sports]\n");
           },
           ask: function (question) {
             if (!question) {
@@ -111,10 +102,7 @@
             }
           },
           github: function () {
-			this.pause();
-			typeText(this, "\n[[!;;;;https://github.com/andrewcar]GitHub]\n", 69, () => {
-				this.resume();
-			});
+			this.echo("\n[[!;;;;https://github.com/andrewcar]GitHub]\n");
           },
           hello: function () {
 			this.pause();
@@ -135,25 +123,13 @@
 			});
           },
           instagram: function () {
-			this.pause();
-			typeText(this, "\n[[!;;;;https://www.instagram.com/andrewsphone]Instagram]\n", 69, () => {
-				this.resume();
-			});
+			this.echo("\n[[!;;;;https://www.instagram.com/andrewsphone]Instagram]\n");
           },
           linkedin: function () {
-			this.pause();
-			typeText(this, "\n[[!;;;;https://www.linkedin.com/in/andrew-carvajal-09549538]Linkedin]\n", 69, () => {
-				this.resume();
-			});
+			this.echo("\n[[!;;;;https://www.linkedin.com/in/andrew-carvajal]Linkedin]\n");
           },
           lola: function () {
             this.echo($('\n<img src="https://i.imgur.com/WzLhVEd.jpg">\n'));
-          },
-          ls: function () {
-			this.pause();
-			typeText(this, "\nYour old magic won't work here.\n", 69, () => {
-				this.resume();
-			});
           },
           marco: function () {
 			this.pause();
@@ -162,10 +138,7 @@
 			});
           },
           medium: function () {
-			this.pause();
-            typeText(this, "\n[[!;;;;https://medium.com/@andrewcarvajal]Medium]\n", 69, () => {
-				this.resume();
-			});
+			this.echo("\n[[!;;;;https://medium.com/@andrewcarvajal]Medium]\n");
           },
           name: function () {
             this.pause();
@@ -188,17 +161,8 @@
 				this.resume();
 			});
           },
-          pwd: function () {
-			this.pause();
-			typeText(this, "\nYour old magic won't work here.\n", 69, () => {
-				this.resume();
-			});
-          },
           ruleofthree: function () {
-			this.pause();
-			typeText(this, "\n[[!;;;;https://apps.apple.com/us/app/rule-of-three-no-ads/id6443475294]Rule of Three]\n", 69, () => {
-				this.resume();
-			});
+			this.echo("\n[[!;;;;https://apps.apple.com/us/app/rule-of-three-no-ads/id6443475294]Rule of Three]\n");
           },
           smellyalater: function () {
 			this.pause();
@@ -229,13 +193,13 @@
       				term.resume(); // Resume terminal in case of error
     		});
           },
-          vim: function () {
+		  cd: function () {
 			this.pause();
 			typeText(this, "\nYour old magic won't work here.\n", 69, () => {
 				this.resume();
 			});
           },
-		  cd: function () {
+		  ls: function () {
 			this.pause();
 			typeText(this, "\nYour old magic won't work here.\n", 69, () => {
 				this.resume();
@@ -247,10 +211,22 @@
 				this.resume();
 			});
           },
+		  pwd: function () {
+			this.pause();
+			typeText(this, "\nYour old magic won't work here.\n", 69, () => {
+				this.resume();
+			});
+          },
+          vim: function () {
+			this.pause();
+			typeText(this, "\nYour old magic won't work here.\n", 69, () => {
+				this.resume();
+			});
+          },
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 263 ////\n///////////////////\n\nThe available known commands are boredgames, cat, clear, cv, dob, email, fox, github, help, lola, name, phone, linkedin, medium and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 264 ////\n///////////////////\n\nThe available known commands are boredgames, cat, clear, cv, dob, email, fox, github, help, lola, name, phone, linkedin, medium and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -265,7 +241,7 @@
           mutations.forEach(function(mutation) {
             if (mutation.addedNodes) {
                 $(mutation.addedNodes).each(function() {
-                    if ($(this).text().includes('Build 263')) {
+                    if ($(this).text().includes('Build 264')) {
                         let updatedText = $(this).text().replace(/\[BUILD\]/g, '').trim();
                         $(this).text(updatedText);
                     }
