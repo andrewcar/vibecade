@@ -32,8 +32,10 @@
         });
       }
 
-    function typeText(term, text, delay = 100) {
+    function typeText(term, text, delay = 100, callback) {
 		let i = 0;
+		let old_prompt = term.get_prompt();
+		term.set_prompt('');
 
         function type() {
           	if (i < text.length) {
@@ -42,6 +44,11 @@
             	setTimeout(type, delay);
           	} else {
 				term.echo('');
+				term.set_prompt(old_prompt);
+
+				if (typeof callback === 'function') {
+					callback();
+				}
           	}
         }
 
@@ -128,8 +135,9 @@
           },
           name: function () {
             this.pause();
-            typeText(this, "\nAndrew Carvajal\n", 69);
-			this.resume();
+            typeText(this, "\nAndrew Carvajal\n", 69, () => {
+				this.resume();
+			});
           },
           clear: function () {
             this.clear();
@@ -167,7 +175,7 @@
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 261 ////\n///////////////////\n\nThe available known commands are bored, cat, clear, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 262 ////\n///////////////////\n\nThe available known commands are bored, cat, clear, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -182,7 +190,7 @@
           mutations.forEach(function(mutation) {
             if (mutation.addedNodes) {
                 $(mutation.addedNodes).each(function() {
-                    if ($(this).text().includes('Build 261')) {
+                    if ($(this).text().includes('Build 262')) {
                         let updatedText = $(this).text().replace(/\[BUILD\]/g, '').trim();
                         $(this).text(updatedText);
                     }
