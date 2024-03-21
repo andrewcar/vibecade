@@ -39,6 +39,10 @@
             term.insert(text.charAt(i));
             i++;
             setTimeout(type, delay);
+          } else {
+            term.echo(""); // Echo an empty string to simulate the Enter key
+            term.set_command(""); // Clear the command to be ready for the next input
+            term.resume(); // Resume the terminal if it was paused
           }
         }
         type();
@@ -161,7 +165,7 @@
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 258 ////\n///////////////////\n\nThe available known commands are bored, cat, clear, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 259 ////\n///////////////////\n\nThe available known commands are bored, cat, clear, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -176,7 +180,7 @@
           mutations.forEach(function(mutation) {
             if (mutation.addedNodes) {
                 $(mutation.addedNodes).each(function() {
-                    if ($(this).text().includes('Build 258')) {
+                    if ($(this).text().includes('Build 259')) {
                         let updatedText = $(this).text().replace(/\[BUILD\]/g, '').trim();
                         $(this).text(updatedText);
                     }
