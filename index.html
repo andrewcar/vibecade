@@ -12,6 +12,7 @@
   </head>
   <body>
     <script>
+
       async function ask(question) {
         await fetch("/api/ai", {
           method: "POST",
@@ -30,6 +31,19 @@
           console.log(error);
         });
       }
+
+      function typeText(term, text, delay = 100) {
+        let i = 0;
+        function type() {
+          if (i < text.length) {
+            term.insert(text.charAt(i));
+            i++;
+            setTimeout(type, delay);
+          }
+        }
+        type();
+      }
+
       async function startTerminal() {
         const result = await $("body").terminal(
         {
@@ -111,8 +125,8 @@
             );
           },
           name: function () {
-            // this.echo("\nAndrew Carvajal\n");
-            term.typing('echo', 69, '\nAndrew Carvajal\n', function() { });
+            // this.clear(); // Optional: Clears the terminal before typing
+            typeText(this, "\nAndrew Carvajal\n", 69); // Adjust delay as needed
           },
           ping: function () {
             this.echo("\npong");
@@ -147,7 +161,7 @@
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 256 ////\n///////////////////\n\nThe available known commands are bored, cat, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 257 ////\n///////////////////\n\nThe available known commands are bored, cat, cv, dob, email, fox, github, help, name, phone, linkedin, medium and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -162,7 +176,7 @@
           mutations.forEach(function(mutation) {
             if (mutation.addedNodes) {
                 $(mutation.addedNodes).each(function() {
-                    if ($(this).text().includes('Build 256')) {
+                    if ($(this).text().includes('Build 257')) {
                         let updatedText = $(this).text().replace(/\[BUILD\]/g, '').trim();
                         $(this).text(updatedText);
                     }
