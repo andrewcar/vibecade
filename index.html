@@ -61,9 +61,6 @@
           boredgames: function () {
 			this.echo("\n[[!;;;;https://apps.apple.com/us/app/bored-games/id1644618221]Bored Games]\n");
           },
-          cat: function () {
-            this.echo($('\n<img src="https://placekitten.com/408/287">\n'));
-          },
           cv: function () {
 			this.echo("\n[[!;;;;https://andrewos.com/docs/cv.pdf]CV]\n");
           },
@@ -112,7 +109,7 @@
           },
           help: function () {
 			this.pause();
-			typeText(this, "\nThe available known commands are boredgames, cat, clear, cv, dob, email, fox, github, help, lola, name, phone, linkedin, medium and ruleofthree.\n", 69, () => {
+			typeText(this, "\nThe available known commands are boredgames, clear, cv, dob, email, fox, github, help, linkedin, lola, medium, name, phone and ruleofthree.\n", 69, () => {
 				this.resume();
 			});
           },
@@ -226,7 +223,7 @@
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 264 ////\n///////////////////\n\nThe available known commands are boredgames, cat, clear, cv, dob, email, fox, github, help, lola, name, phone, linkedin, medium and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 265 ////\n///////////////////\n\nThe available known commands are boredgames, clear, cv, dob, email, fox, github, help, linkedin, lola, medium, name, phone and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -241,7 +238,7 @@
           mutations.forEach(function(mutation) {
             if (mutation.addedNodes) {
                 $(mutation.addedNodes).each(function() {
-                    if ($(this).text().includes('Build 264')) {
+                    if ($(this).text().includes('Build 265')) {
                         let updatedText = $(this).text().replace(/\[BUILD\]/g, '').trim();
                         $(this).text(updatedText);
                     }
