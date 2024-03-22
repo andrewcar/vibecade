@@ -9,6 +9,7 @@
       href="https://unpkg.com/jquery.terminal/css/jquery.terminal.min.css"
     />
     <link rel="stylesheet" href="index.css" />
+	<link rel="icon" type="image/png" href="/favicon.png" />
   </head>
   <body>
     <script>
@@ -223,7 +224,7 @@
         },
         {
           greetings:
-            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 265 ////\n///////////////////\n\nThe available known commands are boredgames, clear, cv, dob, email, fox, github, help, linkedin, lola, medium, name, phone and ruleofthree.\n\n",
+            "\n\n\n                       ▀██                               ▄▄█▀▀██    ▄█▀▀▀▄█\n   ▄▄▄▄   ▄▄ ▄▄▄     ▄▄ ██  ▄▄▄ ▄▄    ▄▄▄▄  ▄▄▄ ▄▄▄ ▄▄▄ ▄█▀    ██   ██▄▄  ▀\n  ▀▀ ▄██   ██  ██  ▄▀  ▀██   ██▀ ▀▀ ▄█▄▄▄██  ██  ██  █  ██      ██   ▀▀███▄\n  ▄█▀ ██   ██  ██  █▄   ██   ██     ██        ███ ███   ▀█▄     ██ ▄     ▀██\n  ▀█▄▄▀█▀ ▄██▄ ██▄ ▀█▄▄▀██▄ ▄██▄     ▀█▄▄▄▀    █   █     ▀▀█▄▄▄█▀  █▀▄▄▄▄█▀\n\n///////////////////\n//// Build 266 ////\n///////////////////\n\nThe available known commands are boredgames, clear, cv, dob, email, fox, github, help, linkedin, lola, medium, name, phone and ruleofthree.\n\n",
           checkArity: false,
         }
       );
@@ -238,7 +239,7 @@
           mutations.forEach(function(mutation) {
             if (mutation.addedNodes) {
                 $(mutation.addedNodes).each(function() {
-                    if ($(this).text().includes('Build 265')) {
+                    if ($(this).text().includes('Build 266')) {
                         let updatedText = $(this).text().replace(/\[BUILD\]/g, '').trim();
                         $(this).text(updatedText);
                     }
