@@ -1,3 +1,9 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .terminal {
   --color: rgba(0, 200, 0, 0.99);
   --glow: 1;
