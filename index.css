@@ -4,15 +4,9 @@ html, body {
   padding: 0;
 }
 
-#terminal {
-  height: 100vh;
-}
-
 .terminal {
   --color: rgba(0, 200, 0, 0.99);
   --glow: 1;
-  height: 100%;
-  box-sizing: border-box;
 }
 
 @media screen and (min-width: 1200px) {
