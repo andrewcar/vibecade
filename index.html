@@ -10,55 +10,15 @@
     />
     <link rel="stylesheet" href="index.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" type="image/png" href="/favicon.png" />
+	  <link rel="icon" type="image/png" href="/favicon.png" />
   </head>
   <body>
+    <div id=""terminal"></div>
+
     <script>
 
-      async function ask(question) {
-        await fetch("/api/ai", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ question: question }),
-        })
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          return data.result;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      }
-
-    function typeText(term, text, delay = 100, callback) {
-		let i = 0;
-		let old_prompt = term.get_prompt();
-		term.set_prompt('');
-
-        function type() {
-          	if (i < text.length) {
-				term.echo(text.charAt(i), { newline: false });
-            	i++;
-            	setTimeout(type, delay);
-          	} else {
-				term.echo('');
-				term.set_prompt(old_prompt);
-
-				if (typeof callback === 'function') {
-					callback();
-				}
-          	}
-        }
-
-        type();
-    }
-
       async function startTerminal() {
-        const result = await $("body").terminal({
+        const result = await $("#terminal").terminal({
           boredgames: function () {
 			      this.echo("\n[[!;;;;https://apps.apple.com/us/app/bored-games/id1644618221]Bored Games]\n");
           },
@@ -228,6 +188,49 @@
       );
       return result;
       }
+
+      async function ask(question) {
+        await fetch("/api/ai", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ question: question }),
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          return data.result;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      }
+
+    function typeText(term, text, delay = 100, callback) {
+		let i = 0;
+		let old_prompt = term.get_prompt();
+		term.set_prompt('');
+
+        function type() {
+          	if (i < text.length) {
+				term.echo(text.charAt(i), { newline: false });
+            	i++;
+            	setTimeout(type, delay);
+          	} else {
+				term.echo('');
+				term.set_prompt(old_prompt);
+
+				if (typeof callback === 'function') {
+					callback();
+				}
+          	}
+        }
+
+        type();
+    }
+
 
       $(document).ready(function () {
         startTerminal();
