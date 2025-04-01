@@ -1,0 +1,14 @@
+{
+  "room": {
+    "name": "Vibecade Lounge",
+    "width": 2000,
+    "height": 1500,
+    "maxUsers": 20
+  },
+  "audio": {
+    "maxDistance": 500,
+    "rolloffFactor": 1.5,
+    "minVolume": 0.05
+  },
+  "defaultAvatar": "avatar.png"
+} 

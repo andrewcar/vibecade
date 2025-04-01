@@ -1,0 +1,15 @@
+Room config loaded from file
+No SSL certificates provided, using HTTP (not recommended for production)
+Creating 8 mediasoup workers...
+Worker 0 created
+Worker 1 created
+Worker 2 created
+Worker 3 created
+Worker 4 created
+Worker 5 created
+Worker 6 created
+Worker 7 created
+Router created
+Mediasoup started
+Server is running on http://localhost:3000
+Using announced IP: 127.0.0.1

@@ -1,0 +1,25 @@
+{
+  "name": "vibecade-proximity",
+  "version": "1.0.0",
+  "description": "WebRTC proximity chat using mediasoup",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "gen-ssl-certs": "mkdir -p cert && openssl req -x509 -newkey rsa:2048 -keyout cert/key.pem -out cert/cert.pem -days 365 -nodes -subj '/CN=localhost'"
+  },
+  "dependencies": {
+    "mediasoup": "^3.11.8",
+    "mediasoup-client": "^3.9.5",
+    "uuid": "^9.0.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.30.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.48.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "license": "MIT",
+  "keywords": [],
+  "author": ""
+}

@@ -1,0 +1,23 @@
+{
+  "name": "vibecade",
+  "version": "1.0.0",
+  "description": "A retro-themed virtual arcade environment",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "vite",
+    "server": "nodemon server.js",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "vite": "^3.2.11",
+    "socket.io-client": "^4.7.2"
+  }
+}
