@@ -2207,22 +2207,28 @@ const togglePerspective = () => {
     // Store current rotation
     const currentRotation = bodyModel.rotation.y;
     
-    // Move camera back and up for third person view
-    camera.position.set(
-      bodyModel.position.x - Math.sin(currentRotation) * 8, // Increased from 5 to 8
-      bodyModel.position.y + 3, // Increased from 2 to 3
-      bodyModel.position.z - Math.cos(currentRotation) * 8 // Increased from 5 to 8
-    );
-    
-    // Set camera target to player position
-    controls.target.copy(bodyModel.position);
-    controls.target.y += 1;
-    
-    // Make player model visible in third person
+    // Make player model visible first
     if (bodyModel) {
       bodyModel.visible = true;
     }
+    
+    // Move camera much further back and higher up for third person view
+    camera.position.set(
+      bodyModel.position.x - Math.sin(currentRotation) * 15, // Increased from 8 to 15
+      bodyModel.position.y + 8, // Increased from 3 to 8
+      bodyModel.position.z - Math.cos(currentRotation) * 15 // Increased from 8 to 15
+    );
+    
+    // Set camera target to player position, slightly above base
+    controls.target.copy(bodyModel.position);
+    controls.target.y += 2; // Increased from 1 to 2 to look more at upper body
+    
   } else {
+    // Hide player model before switching to first person
+    if (bodyModel) {
+      bodyModel.visible = false;
+    }
+    
     // Return to first person view
     camera.position.copy(bodyModel.position);
     camera.position.y += 1.6;
@@ -2233,14 +2239,15 @@ const togglePerspective = () => {
       bodyModel.position.y + 1.6,
       bodyModel.position.z + Math.cos(bodyModel.rotation.y)
     );
-    
-    // Hide player model in first person
-    if (bodyModel) {
-      bodyModel.visible = false;
-    }
   }
   
+  // Force an immediate update of the controls
   controls.update();
+  
+  // Schedule another update on next frame to ensure smooth transition
+  requestAnimationFrame(() => {
+    controls.update();
+  });
 };
 
 // Add perspective toggle button handler
