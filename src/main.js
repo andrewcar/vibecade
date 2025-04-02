@@ -2200,63 +2200,58 @@ let targetBodyRotation = -Math.PI/2; // Initialize to match first-person camera 
 let targetPitch = 0; // Camera pitch angle
 
 // Handle perspective toggle
-document.addEventListener('keypress', (event) => {
-  if (event.code === 'KeyV') {
-    isThirdPerson = !isThirdPerson;
+const togglePerspective = () => {
+  isThirdPerson = !isThirdPerson;
+  
+  if (isThirdPerson) {
+    // Store current rotation
+    const currentRotation = bodyModel.rotation.y;
     
-    if (isThirdPerson) {
-      // Switch to third person
-      controls.unlock();
-      bodyModel.visible = true;
-      
-      // Hide cursor and controls info in third person
-      document.body.style.cursor = 'none';
-      document.querySelector('.controls-info').style.display = 'none';
-      
-      // Get current first-person camera rotation
-      if (!hasInitialRotationOffset) {
-        // Only add PI on the first switch to third person
-        targetBodyRotation = controls.getObject().rotation.y + Math.PI;
-        hasInitialRotationOffset = true;
-      } else {
-        targetBodyRotation = controls.getObject().rotation.y;
-      }
-      
-      // Update body position and rotation
-      bodyModel.position.copy(camera.position);
-      bodyModel.rotation.y = targetBodyRotation;
-      
-      // Position camera behind player
-      const offset = thirdPersonOffset.clone();
-      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), targetBodyRotation);
-      camera.position.copy(bodyModel.position).add(offset);
-      
-      // Make camera look at player
-      camera.lookAt(
-        bodyModel.position.x,
-        bodyModel.position.y + 1,
-        bodyModel.position.z
-      );
-    } else {
-      // Switch back to first person
-      bodyModel.visible = false;
-      document.body.style.cursor = 'default';
-      document.querySelector('.controls-info').style.display = 'block';
-      
-      // Reset camera position to body position
-      camera.position.copy(bodyModel.position);
-      
-      // Normalize the rotation to be between -PI and PI
-      let normalizedRotation = targetBodyRotation % (2 * Math.PI);
-      if (normalizedRotation > Math.PI) {
-        normalizedRotation -= 2 * Math.PI;
-      } else if (normalizedRotation < -Math.PI) {
-        normalizedRotation += 2 * Math.PI;
-      }
-      
-      // Set the first-person camera rotation
-      controls.getObject().rotation.set(0, normalizedRotation, 0);
-    }
+    // Move camera back and up for third person view
+    camera.position.set(
+      bodyModel.position.x - Math.sin(currentRotation) * 5,
+      bodyModel.position.y + 2,
+      bodyModel.position.z - Math.cos(currentRotation) * 5
+    );
+    
+    // Set camera target to player position
+    controls.target.copy(bodyModel.position);
+    controls.target.y += 1;
+  } else {
+    // Return to first person view
+    camera.position.copy(bodyModel.position);
+    camera.position.y += 1.6;
+    
+    // Set look target in front of player
+    controls.target.set(
+      bodyModel.position.x + Math.sin(bodyModel.rotation.y),
+      bodyModel.position.y + 1.6,
+      bodyModel.position.z + Math.cos(bodyModel.rotation.y)
+    );
+  }
+  
+  controls.update();
+};
+
+// Add perspective toggle button handler
+if (perspectiveToggle) {
+  perspectiveToggle.addEventListener('touchend', (event) => {
+    event.preventDefault();
+    togglePerspective();
+  }, { passive: false });
+  
+  perspectiveToggle.addEventListener('click', (event) => {
+    event.preventDefault();
+    togglePerspective();
+  });
+}
+
+// Update the existing keyboard event handler to work with both V key and perspective toggle
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'v' || event.key === 'V') {
+    togglePerspective();
+  } else if (event.key === 'Enter') {
+    toggleChatInput();
   }
 });
 
@@ -3338,47 +3333,3 @@ class PongGame {
     this.screenTexture.needsUpdate = true;
   }
 }
-
-// Handle perspective toggle
-const togglePerspective = () => {
-  if (isMobileDevice()) {
-    isThirdPerson = !isThirdPerson;
-    
-    if (isThirdPerson) {
-      camera.position.set(0, 2, 5);
-      controls.target.copy(bodyModel.position);
-    } else {
-      camera.position.copy(bodyModel.position);
-      camera.position.y += 1.6;
-      controls.target.set(
-        bodyModel.position.x + Math.sin(bodyModel.rotation.y),
-        bodyModel.position.y + 1.6,
-        bodyModel.position.z + Math.cos(bodyModel.rotation.y)
-      );
-    }
-    
-    controls.update();
-  }
-};
-
-// Add perspective toggle button handler
-if (perspectiveToggle) {
-  perspectiveToggle.addEventListener('touchend', (event) => {
-    event.preventDefault();
-    togglePerspective();
-  }, { passive: false });
-  
-  perspectiveToggle.addEventListener('click', (event) => {
-    event.preventDefault();
-    togglePerspective();
-  });
-}
-
-// Update the existing keyboard event handler to work with both V key and perspective toggle
-window.addEventListener('keydown', (event) => {
-  if (event.key === 'v' || event.key === 'V') {
-    togglePerspective();
-  } else if (event.key === 'Enter') {
-    toggleChatInput();
-  }
-});
