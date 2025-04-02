@@ -1056,7 +1056,7 @@ export const createArcade = (scene, textureLoader) => {
     const versionMesh = new THREE.Mesh(geometry, material);
     
     // Position under VIBECADE logo - moved even further left
-    versionMesh.position.set(-10.2, 2.0, -9.75);  // Moved further left (x: -9.5 to -10.2)
+    versionMesh.position.set(-11.2, 2.0, -9.75);  // Moved further left (x: -10.2 to -11.2)
     versionMesh.rotation.y = 0;
     
     return versionMesh;
