@@ -1,0 +1,34 @@
+Privacy Policy
+Introduction
+Welcome to MemeCoinGPT. We value your privacy and strive to protect your personal data. This Privacy Policy outlines how we collect, use, and protect your information when you use our service.
+
+Information We Collect
+Personal Information
+Contact Information: When you contact us, we may collect your name, email address, and any other information you provide.
+Usage Information: We collect information about how you use our service, including the commands you input and the results generated.
+Non-Personal Information
+Cookies: We use cookies to enhance your experience and gather information about the usage of our service.
+Log Data: Our servers automatically record information when you access our service, including your IP address, browser type, and the date and time of your request.
+How We Use Your Information
+Service Improvement: We use your information to improve our service and provide a better user experience.
+Communication: We may use your contact information to respond to your inquiries and provide updates.
+Analytics: Non-personal information is used for analytical purposes to understand usage patterns and enhance our service.
+Sharing Your Information
+We do not sell, trade, or otherwise transfer your personal information to outside parties. We may share your information with trusted third parties who assist us in operating our service, as long as they agree to keep this information confidential.
+
+Data Security
+We implement various security measures to protect your personal information. However, no method of transmission over the internet or electronic storage is 100% secure.
+
+Your Rights
+Access: You have the right to request access to the personal information we hold about you.
+Correction: You can request corrections to your personal information if it is inaccurate.
+Deletion: You can request the deletion of your personal information, subject to certain conditions.
+Changes to This Privacy Policy
+We may update this Privacy Policy from time to time. Any changes will be posted on this page, and the date of the latest revision will be indicated at the top.
+
+Contact Us
+If you have any questions about this Privacy Policy, please contact us at [your contact email].
+
+Effective Date: June 16, 2024
+
+This Privacy Policy is hosted by MemeCoinGPT and applies to all users of our service. By using our service, you consent to the terms outlined in this policy.
