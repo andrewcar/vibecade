@@ -285,6 +285,7 @@ document.body.appendChild(chatInput);
 
 // Get keyboard toggle button
 const keyboardToggle = document.querySelector('.keyboard-toggle');
+const perspectiveToggle = document.querySelector('.perspective-toggle');
 
 // Handle chat input visibility
 let isChatInputVisible = false;
@@ -3337,3 +3338,47 @@ class PongGame {
     this.screenTexture.needsUpdate = true;
   }
 }
+
+// Handle perspective toggle
+const togglePerspective = () => {
+  if (isMobileDevice()) {
+    isThirdPerson = !isThirdPerson;
+    
+    if (isThirdPerson) {
+      camera.position.set(0, 2, 5);
+      controls.target.copy(bodyModel.position);
+    } else {
+      camera.position.copy(bodyModel.position);
+      camera.position.y += 1.6;
+      controls.target.set(
+        bodyModel.position.x + Math.sin(bodyModel.rotation.y),
+        bodyModel.position.y + 1.6,
+        bodyModel.position.z + Math.cos(bodyModel.rotation.y)
+      );
+    }
+    
+    controls.update();
+  }
+};
+
+// Add perspective toggle button handler
+if (perspectiveToggle) {
+  perspectiveToggle.addEventListener('touchend', (event) => {
+    event.preventDefault();
+    togglePerspective();
+  }, { passive: false });
+  
+  perspectiveToggle.addEventListener('click', (event) => {
+    event.preventDefault();
+    togglePerspective();
+  });
+}
+
+// Update the existing keyboard event handler to work with both V key and perspective toggle
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'v' || event.key === 'V') {
+    togglePerspective();
+  } else if (event.key === 'Enter') {
+    toggleChatInput();
+  }
+});
