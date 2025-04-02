@@ -10,6 +10,7 @@ import { createLighting } from './lighting.js';
 import { setupInteraction } from './interaction.js';
 import { MultiplayerManager } from './multiplayer.js';
 import { createPlayerModel } from './playerModel.js';
+import { WalletUI } from './wallet.js';
 
 // Initialize music player
 const musicPlayer = {
@@ -1315,8 +1316,21 @@ backRowData.forEach((data, index) => {
 
 // Create Pong cabinet (cabinet 12)
 const createPongCabinet = () => {
+  // Add interpolation state
   const modelGroup = new THREE.Group();
-  
+  modelGroup.userData = {
+    // ... existing properties ...
+    lastUpdateTime: 0,
+    updateInterval: 50, // Send updates every 50ms
+    targetLeftPaddleY: 256,
+    targetRightPaddleY: 256,
+    lastLeftPaddleY: 256,
+    lastRightPaddleY: 256,
+    // ... existing code ...
+  };
+
+  // ... existing code ...
+
   // Create cabinet body
   const cabinetGeometry = new THREE.BoxGeometry(1.0, 2.1, 0.88);
   const cabinetMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
@@ -1428,6 +1442,43 @@ const createPongCabinet = () => {
     isTextVisible: true,
     currentMessage: 'CLICK TO START',
     gameState: 'title',
+    // Initialize audio context
+    audioContext: new (window.AudioContext || window.webkitAudioContext)(),
+    // Add sound effect methods
+    playPaddleHitSound() {
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      
+      oscillator.type = 'square';
+      oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(880, this.audioContext.currentTime + 0.1);
+      
+      gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+      
+      oscillator.start();
+      oscillator.stop(this.audioContext.currentTime + 0.1);
+    },
+    playScoreSound() {
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      
+      oscillator.type = 'square';
+      oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(220, this.audioContext.currentTime + 0.3);
+      
+      gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+      
+      oscillator.start();
+      oscillator.stop(this.audioContext.currentTime + 0.3);
+    },
     // Add score tracking
     leftScore: 0,
     rightScore: 0,
@@ -1440,7 +1491,7 @@ const createPongCabinet = () => {
     ballX: 256,
     ballY: 256,
     ballSize: 8,
-    BALL_BASE_SPEED: 8, // Constant base speed
+    BALL_BASE_SPEED: 10, // Increased from 8 to 10 for faster gameplay
     ballSpeedX: 4, // Initial speed
     ballSpeedY: 0,
     lastPaddleY: 216,
@@ -1454,7 +1505,7 @@ const createPongCabinet = () => {
       this.ballY = 256;
       // Random direction (left or right) but constant speed
       this.ballSpeedX = this.BALL_BASE_SPEED * (Math.random() < 0.5 ? -1 : 1);
-      this.ballSpeedY = 0; // Reset vertical speed
+      this.ballSpeedY = (Math.random() - 0.5) * (this.BALL_BASE_SPEED * 0.5); // Add slight random vertical movement
     },
     createExplosion: function(x, y) {
       // Create 8 particles in different directions
@@ -1692,14 +1743,19 @@ const createPongCabinet = () => {
               );
             }
             
-            // Emit paddle position to other player if moved
-            if (upPressed || downPressed) {
-              multiplayerManager.socket.emit('pongPaddleMove', {
-                cabinetId: modelGroup.userData.id,
-                paddleY: modelGroup.userData.rightPaddleY
-              });
+            // Rate limit paddle position updates
+            const now = Date.now();
+            if (now - modelGroup.userData.lastUpdateTime > modelGroup.userData.updateInterval) {
+              if (upPressed || downPressed) {
+                multiplayerManager.socket.emit('pongPaddleMove', {
+                  cabinetId: modelGroup.userData.id,
+                  paddleY: modelGroup.userData.rightPaddleY,
+                  playerId: multiplayerManager.socket.id
+                });
+              }
+              modelGroup.userData.lastUpdateTime = now;
             }
-          } else {
+          } else if (multiplayerManager.socket.id === modelGroup.userData.player1Id) {
             // Player 1 controls left paddle
             if (upPressed) {
               modelGroup.userData.leftPaddleY = Math.max(
@@ -1714,14 +1770,32 @@ const createPongCabinet = () => {
               );
             }
             
-            // Emit paddle position to other player if moved
-            if (upPressed || downPressed) {
-              multiplayerManager.socket.emit('pongPaddleMove', {
-                cabinetId: modelGroup.userData.id,
-                paddleY: modelGroup.userData.leftPaddleY
-              });
+            // Rate limit paddle position updates
+            const now = Date.now();
+            if (now - modelGroup.userData.lastUpdateTime > modelGroup.userData.updateInterval) {
+              if (upPressed || downPressed) {
+                multiplayerManager.socket.emit('pongPaddleMove', {
+                  cabinetId: modelGroup.userData.id,
+                  paddleY: modelGroup.userData.leftPaddleY,
+                  playerId: multiplayerManager.socket.id
+                });
+              }
+              modelGroup.userData.lastUpdateTime = now;
             }
           }
+          
+          // Interpolate paddle positions
+          const lerpFactor = 0.3; // Adjust this value to control smoothing (0.1 to 0.5 recommended)
+          modelGroup.userData.leftPaddleY = lerp(
+            modelGroup.userData.lastLeftPaddleY,
+            modelGroup.userData.targetLeftPaddleY,
+            lerpFactor
+          );
+          modelGroup.userData.rightPaddleY = lerp(
+            modelGroup.userData.lastRightPaddleY,
+            modelGroup.userData.targetRightPaddleY,
+            lerpFactor
+          );
         } else {
           // Single player mode - player controls left paddle only
           if (upPressed) {
@@ -1739,20 +1813,7 @@ const createPongCabinet = () => {
           
           // Update AI paddle in single player mode
           modelGroup.userData.updateAIPaddle();
-          
-          // Emit paddle positions in AI mode too
-          if (upPressed || downPressed || modelGroup.userData.rightPaddleY !== modelGroup.userData.lastRightPaddleY) {
-            multiplayerManager.socket.emit('pongPaddleMove', {
-              cabinetId: modelGroup.userData.id,
-              isAI: true,
-              leftPaddleY: modelGroup.userData.leftPaddleY,
-              rightPaddleY: modelGroup.userData.rightPaddleY
-            });
-          }
         }
-        
-        // Store last right paddle position for AI movement detection
-        modelGroup.userData.lastRightPaddleY = modelGroup.userData.rightPaddleY;
         
         // Always update the screen after any movement
         modelGroup.userData.updateScreen(modelGroup.userData.currentMessage);
@@ -1807,6 +1868,7 @@ const createPongCabinet = () => {
           // Check for top/bottom wall collisions
           if (modelGroup.userData.ballY < 0 || modelGroup.userData.ballY > 512) {
             modelGroup.userData.ballSpeedY = -modelGroup.userData.ballSpeedY;
+            modelGroup.userData.ballY = modelGroup.userData.ballY < 0 ? 0 : 512; // Prevent sticking to walls
           }
           
           // Check for paddle collisions and scoring
@@ -1818,6 +1880,8 @@ const createPongCabinet = () => {
             modelGroup.userData.rightScore++;
             modelGroup.userData.scoringState = 'right';
             modelGroup.userData.scoreFlashTime = Date.now();
+            // Play score sound
+            modelGroup.userData.playScoreSound();
             
             // Emit score update
             multiplayerManager.socket.emit('pongScoreUpdate', {
@@ -1853,6 +1917,8 @@ const createPongCabinet = () => {
             modelGroup.userData.leftScore++;
             modelGroup.userData.scoringState = 'left';
             modelGroup.userData.scoreFlashTime = Date.now();
+            // Play score sound
+            modelGroup.userData.playScoreSound();
             
             // Emit score update
             multiplayerManager.socket.emit('pongScoreUpdate', {
@@ -1868,6 +1934,11 @@ const createPongCabinet = () => {
               modelGroup.userData.gameOverStartTime = Date.now();
               modelGroup.userData.isTextVisible = true;
               modelGroup.userData.scoringState = null;
+              
+              // Add coin reward for winning against AI
+              if (!modelGroup.userData.isMultiplayer) {
+                wallet.addCoins(1);
+              }
               
               // Emit game over
               multiplayerManager.socket.emit('pongGameOver', {
@@ -1885,6 +1956,9 @@ const createPongCabinet = () => {
                 modelGroup.userData.ballX + modelGroup.userData.ballSize/2 > leftPaddleRight - 10 && // Full paddle width check
                 modelGroup.userData.ballY >= modelGroup.userData.leftPaddleY &&
                 modelGroup.userData.ballY <= modelGroup.userData.leftPaddleY + modelGroup.userData.paddleHeight) {
+              // Play paddle hit sound
+              modelGroup.userData.playPaddleHitSound();
+              
               // Set ball position to just right of paddle to ensure visual contact
               modelGroup.userData.ballX = leftPaddleRight + modelGroup.userData.ballSize/2;
               
@@ -1914,6 +1988,9 @@ const createPongCabinet = () => {
                 modelGroup.userData.ballX - modelGroup.userData.ballSize/2 < rightPaddleLeft + 10 && // Full paddle width check
                 modelGroup.userData.ballY >= modelGroup.userData.rightPaddleY &&
                 modelGroup.userData.ballY <= modelGroup.userData.rightPaddleY + 80) {
+              // Play paddle hit sound
+              modelGroup.userData.playPaddleHitSound();
+              
               // Set ball position to just left of paddle to ensure visual contact
               modelGroup.userData.ballX = rightPaddleLeft - modelGroup.userData.ballSize/2;
               
@@ -2595,6 +2672,10 @@ document.addEventListener('mousemove', (event) => {
 // Initialize multiplayer
 const multiplayerManager = new MultiplayerManager(scene);
 
+// Initialize wallet
+const wallet = new WalletUI();
+wallet.loadCoins();
+
 // Modify the animate function to include multiplayer updates
 const animate = () => {
   const elapsedTime = clock.getElapsedTime();
@@ -3170,6 +3251,12 @@ multiplayerManager.socket.on('pongGameOver', (data) => {
     pongCabinet.userData.leftScore = data.leftScore;
     pongCabinet.userData.rightScore = data.rightScore;
     pongCabinet.userData.updateScreen('');
+    
+    // Add coin reward for winning
+    if ((data.leftScore > data.rightScore && multiplayerManager.socket.id === pongCabinet.userData.player1Id) ||
+        (data.rightScore > data.leftScore && multiplayerManager.socket.id === pongCabinet.userData.player2Id)) {
+      wallet.addCoins(1);
+    }
   }
 });
 

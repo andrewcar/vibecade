@@ -9,6 +9,9 @@ export class PongCabinet {
         this.group = new THREE.Group();
         this.wasEKeyPressed = false;  // Track previous E key state
         
+        // Initialize audio context
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
         // Cabinet dimensions (matching other cabinets)
         this.dimensions = {
             width: 1.0,
@@ -184,6 +187,48 @@ export class PongCabinet {
         this.updateDisplay("Game Starting...\nGet Ready!");
         // Will implement actual game logic later
         console.log("Starting Pong game");
+    }
+
+    // Add sound effect methods
+    playPaddleHitSound() {
+        // Create oscillator and gain nodes
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        
+        // Connect nodes
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        
+        // Set up sound parameters
+        oscillator.type = 'square'; // Classic arcade sound
+        oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime); // A4 note
+        oscillator.frequency.exponentialRampToValueAtTime(880, this.audioContext.currentTime + 0.1); // Slide up to A5
+        
+        // Set volume envelope
+        gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime); // Low volume to avoid being too loud
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+        
+        // Play sound
+        oscillator.start();
+        oscillator.stop(this.audioContext.currentTime + 0.1);
+    }
+
+    playScoreSound() {
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(220, this.audioContext.currentTime + 0.3);
+        
+        gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+        
+        oscillator.start();
+        oscillator.stop(this.audioContext.currentTime + 0.3);
     }
 
     update(renderer) {

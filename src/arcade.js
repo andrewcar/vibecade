@@ -305,6 +305,88 @@ export const createArcade = (scene, textureLoader) => {
   createNeonLines(12, new THREE.Vector3(15, 0, 10), new THREE.Euler(0, Math.PI, 0));
   createLowerContinuousLines(12, new THREE.Vector3(15, 0, 10), new THREE.Euler(0, Math.PI, 0));
   
+  // Create bulletin board on northeastern part of north wall
+  const bulletinBoardGroup = new THREE.Group();
+  
+  // Create the outer yellow frame
+  const frameGeometry = new THREE.PlaneGeometry(2.86, 1.7);
+  const frameMaterial = new THREE.MeshBasicMaterial({ 
+    color: 0xffff00,
+    side: THREE.DoubleSide
+  });
+  const frame = new THREE.Mesh(frameGeometry, frameMaterial);
+  bulletinBoardGroup.add(frame);
+
+  // Create the inner black background with text
+  const boardGeometry = new THREE.PlaneGeometry(2.6, 1.5);
+  
+  // Create canvas for the bulletin board content
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024; // Higher resolution for better text quality
+  canvas.height = 768;
+  const ctx = canvas.getContext('2d');
+
+  // Fill black background
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Add "COMING SOON" header
+  ctx.fillStyle = '#ff00ff'; // Magenta like the VIBECADE sign
+  ctx.font = 'bold 72px "Press Start 2P"';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.shadowColor = '#ff00ff';
+  ctx.shadowBlur = 15;
+  ctx.fillText('COMING SOON', canvas.width/2, 40);
+
+  // Add main feature (Proximity Voice Chat)
+  ctx.fillStyle = '#00ffff'; // Cyan for main feature
+  ctx.font = 'bold 56px "Press Start 2P"';
+  ctx.shadowColor = '#00ffff';
+  ctx.fillText('PROXIMITY', canvas.width/2, 280);
+  ctx.fillText('VOICE CHAT', canvas.width/2, 350);
+
+  // Add other features with different colors and sizes
+  ctx.fillStyle = '#ffff00'; // Yellow for prizes
+  ctx.font = 'bold 48px "Press Start 2P"';
+  ctx.shadowColor = '#ffff00';
+  ctx.fillText('PRIZES', canvas.width/2, 500);
+
+  ctx.fillStyle = '#00ff00'; // Green for jukebox
+  ctx.shadowColor = '#00ff00';
+  ctx.fillText('AI JUKEBOX', canvas.width/2, 600);
+
+  // Add some decorative elements
+  const addGlowingDot = (x, y, color) => {
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 15;
+    ctx.fill();
+  };
+
+  // Add glowing dots between items
+  addGlowingDot(canvas.width/2, 200, '#ff00ff');
+  addGlowingDot(canvas.width/2 - 20, 200, '#ff00ff');
+  addGlowingDot(canvas.width/2 + 20, 200, '#ff00ff');
+
+  // Create texture from canvas
+  const texture = new THREE.CanvasTexture(canvas);
+  const boardMaterial = new THREE.MeshBasicMaterial({ 
+    map: texture,
+    side: THREE.DoubleSide
+  });
+  
+  const board = new THREE.Mesh(boardGeometry, boardMaterial);
+  board.position.z = 0.01;
+  bulletinBoardGroup.add(board);
+
+  // Position and orient the entire group
+  bulletinBoardGroup.position.set(-9, 2.5, 9.9);
+  bulletinBoardGroup.rotation.y = Math.PI;
+  scene.add(bulletinBoardGroup);
+  
   // Left wall (split into two sections for the nook)
   // Lower section of left wall
   const leftWallLowerGeometry = new THREE.PlaneGeometry(10, 4.5);
@@ -533,101 +615,12 @@ export const createArcade = (scene, textureLoader) => {
       blending: THREE.AdditiveBlending,
     });
     const sign = new THREE.Mesh(signGeometry, signMaterial);
-    sign.position.set(-8, 2.8, -9.85);  // Moved further left and down
+    sign.position.set(-8, 2.5, -9.85);  // Moved down from 2.8 to 2.5
     signGroup.add(sign);
     
-    // Create gap in neon lines for the sign and apply it to the back wall
-    const createNeonLinesWithGap = (width, position, rotation) => {
-      const gapWidth = 24;
-      const gapStart = -8 - gapWidth/2;
-      const gapEnd = -8 + gapWidth/2;
-      
-      // Left section of upper line (yellow)
-      const upperLineLeftGeometry = new THREE.BoxGeometry((width + gapStart) / 2, 0.1, 0.1);
-      const upperLineLeft = new THREE.Mesh(upperLineLeftGeometry, neonYellowMaterial);
-      upperLineLeft.position.copy(position);
-      upperLineLeft.position.x = (gapStart - width) / 4;
-      upperLineLeft.position.y = 4.0;
-      if (rotation) upperLineLeft.rotation.copy(rotation);
-      scene.add(upperLineLeft);
-
-      // Right section of upper line (yellow)
-      const upperLineRightGeometry = new THREE.BoxGeometry((width - gapEnd) / 2, 0.1, 0.1);
-      const upperLineRight = new THREE.Mesh(upperLineRightGeometry, neonYellowMaterial);
-      upperLineRight.position.copy(position);
-      upperLineRight.position.x = (width + gapEnd) / 4;
-      upperLineRight.position.y = 4.0;
-      if (rotation) upperLineRight.rotation.copy(rotation);
-      scene.add(upperLineRight);
-
-      // Left section of lower line (blue)
-      const lowerLineLeftGeometry = new THREE.BoxGeometry((width + gapStart) / 2, 0.1, 0.1);
-      const lowerLineLeft = new THREE.Mesh(lowerLineLeftGeometry, neonBlueMaterial);
-      lowerLineLeft.position.copy(position);
-      lowerLineLeft.position.x = (gapStart - width) / 4;
-      lowerLineLeft.position.y = 3.8;
-      if (rotation) lowerLineLeft.rotation.copy(rotation);
-      scene.add(lowerLineLeft);
-
-      // Right section of lower line (blue)
-      const lowerLineRightGeometry = new THREE.BoxGeometry((width - gapEnd) / 2, 0.1, 0.1);
-      const lowerLineRight = new THREE.Mesh(lowerLineRightGeometry, neonBlueMaterial);
-      lowerLineRight.position.copy(position);
-      lowerLineRight.position.x = (width + gapEnd) / 4;
-      lowerLineRight.position.y = 3.8;
-      if (rotation) lowerLineRight.rotation.copy(rotation);
-      scene.add(lowerLineRight);
-
-      // Left section of continuous upper line (yellow)
-      const contUpperLineLeftGeometry = new THREE.BoxGeometry((width + gapStart) / 2, 0.2, 0.2);
-      const contUpperLineLeft = new THREE.Mesh(contUpperLineLeftGeometry, continuousYellowMaterial);
-      contUpperLineLeft.position.copy(position);
-      contUpperLineLeft.position.x = (gapStart - width) / 4;
-      contUpperLineLeft.position.y = 1.1; // Adjusted height between original and previous position
-      if (rotation) contUpperLineLeft.rotation.copy(rotation);
-      scene.add(contUpperLineLeft);
-
-      // Right section of continuous upper line (yellow)
-      const contUpperLineRightGeometry = new THREE.BoxGeometry((width - gapEnd) / 2, 0.2, 0.2);
-      const contUpperLineRight = new THREE.Mesh(contUpperLineRightGeometry, continuousYellowMaterial);
-      contUpperLineRight.position.copy(position);
-      contUpperLineRight.position.x = (width + gapEnd) / 4;
-      contUpperLineRight.position.y = 1.1; // Adjusted height between original and previous position
-      if (rotation) contUpperLineRight.rotation.copy(rotation);
-      scene.add(contUpperLineRight);
-
-      // Left section of continuous lower line (orange)
-      const contLowerLineLeftGeometry = new THREE.BoxGeometry((width + gapStart) / 2, 0.2, 0.2);
-      const contLowerLineLeft = new THREE.Mesh(contLowerLineLeftGeometry, continuousOrangeMaterial);
-      contLowerLineLeft.position.copy(position);
-      contLowerLineLeft.position.x = (gapStart - width) / 4;
-      contLowerLineLeft.position.y = 0.9; // Adjusted height between original and previous position
-      if (rotation) contLowerLineLeft.rotation.copy(rotation);
-      scene.add(contLowerLineLeft);
-
-      // Right section of continuous lower line (orange)
-      const contLowerLineRightGeometry = new THREE.BoxGeometry((width - gapEnd) / 2, 0.2, 0.2);
-      const contLowerLineRight = new THREE.Mesh(contLowerLineRightGeometry, continuousOrangeMaterial);
-      contLowerLineRight.position.copy(position);
-      contLowerLineRight.position.x = (width + gapEnd) / 4;
-      contLowerLineRight.position.y = 0.9; // Adjusted height between original and previous position
-      if (rotation) contLowerLineRight.rotation.copy(rotation);
-      scene.add(contLowerLineRight);
-
-      return { 
-        upperLineLeft, 
-        upperLineRight, 
-        lowerLineLeft, 
-        lowerLineRight,
-        contUpperLineLeft,
-        contUpperLineRight,
-        contLowerLineLeft,
-        contLowerLineRight
-      };
-    };
-
-    // Create the gapped lines for the back wall
-    createNeonLinesWithGap(30, new THREE.Vector3(0, 0, -10), new THREE.Euler(0, 0, 0));
+    // Create continuous neon lines for the back wall (no gap)
+    createNeonLines(30, new THREE.Vector3(0, 0, -10), new THREE.Euler(0, 0, 0));
+    createLowerContinuousLines(30, new THREE.Vector3(0, 0, -10), new THREE.Euler(0, 0, 0));
     
     scene.add(signGroup);
     return signGroup;
@@ -1043,7 +1036,7 @@ export const createArcade = (scene, textureLoader) => {
     ctx.textBaseline = 'middle';
     ctx.shadowColor = '#ff00ff';  // Added shadow to match logo glow
     ctx.shadowBlur = 40;  // Match logo's glow effect
-    ctx.fillText('1.0.7', canvas.width/2, canvas.height/2);  // Updated to 1.0.7
+    ctx.fillText('1.0.12', canvas.width/2, canvas.height/2);  // Updated to 1.0.12
 
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshBasicMaterial({

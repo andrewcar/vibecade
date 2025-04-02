@@ -102,7 +102,7 @@ The arcade features designated poster slots for advertising and decoration:
   - Proper aspect ratio mapping (6x4 repeats) to prevent stretching
   - 20 stars per texture tile
 - White neon border lines running along all walls
-- VIBECADE neon sign on the south wall with adaptive gap in border lines
+- VIBECADE neon sign on the south wall
 - Debug log display at top of screen for real-time event monitoring
 - Vibe Jam 2025 link in bottom-right corner:
   - Fixed position with game controller emoji
@@ -133,30 +133,6 @@ The arcade features designated poster slots for advertising and decoration:
     - color: Player avatar color
     - speed: Movement speed (in m/s)
     - ref: Origin game URL for return portal
-- Chat System:
-  - Press Enter to open chat input
-  - Type message and press Enter again to send
-  - Messages appear in chat bubbles above players' heads
-  - Chat bubbles use sprite-based billboarding to always face the camera
-  - Semi-transparent black background with white text
-  - "Press Start 2P" retro font for authentic arcade feel
-  - Messages visible to all players in real-time
-  - Dynamic text features:
-    - Automatic font size adjustment based on message length
-    - Text wrapping for long messages
-    - Bubble size adapts to content
-    - Minimum font size of 8px for readability
-  - Message timing:
-    - Messages automatically fade after 5 seconds
-    - Timer resets when new message is sent
-    - Messages remain visible until timeout or new message
-  - Platform-specific optimizations:
-    - Desktop: Improved Enter key handling with event capturing
-    - Mobile: Touch-optimized keyboard toggle and positioning
-    - Proper event propagation and prevention
-    - No interference with game controls while chatting
-  - Proper handling of font loading with fallback to monospace
-  - Chat labels always readable from any angle or distance
 
 ### Game Cabinets
 - Each cabinet uses a detailed GLTF 3D model with:
@@ -212,7 +188,7 @@ The arcade features designated poster slots for advertising and decoration:
   - Multi-attempt positioning with fallback options
   - Real-time position negotiation between client and server
 - Chat System:
-  - Press Enter to open chat input
+  - Press Enter to open chat input (using capture phase event handling for reliable desktop functionality)
   - Type message and press Enter again to send
   - Messages appear in chat bubbles above players' heads
   - Chat bubbles use sprite-based billboarding to always face the camera
@@ -228,13 +204,9 @@ The arcade features designated poster slots for advertising and decoration:
     - Messages automatically fade after 5 seconds
     - Timer resets when new message is sent
     - Messages remain visible until timeout or new message
-  - Platform-specific optimizations:
-    - Desktop: Improved Enter key handling with event capturing
-    - Mobile: Touch-optimized keyboard toggle and positioning
-    - Proper event propagation and prevention
-    - No interference with game controls while chatting
   - Proper handling of font loading with fallback to monospace
   - Chat labels always readable from any angle or distance
+  - Mobile-optimized input handling with keyboard adjustments
 
 ### Web Browser Screen
 - Interactive 3D web browser display in the arcade

@@ -223,37 +223,23 @@ io.on('connection', (socket) => {
 
     // Handle paddle movement
     socket.on('pongPaddleMove', (data) => {
-        const { cabinetId, paddleY, isAI, leftPaddleY, rightPaddleY } = data;
+        const { cabinetId, paddleY, playerId } = data;
         const game = pongGames.get(cabinetId);
         
         if (game) {
-            if (isAI) {
-                // In AI mode, update both paddles
-                game.leftPaddleY = leftPaddleY;
-                game.rightPaddleY = rightPaddleY;
-                
-                // Broadcast both paddle positions
-                socket.broadcast.emit('pongPaddleUpdate', {
-                    cabinetId,
-                    isAI: true,
-                    leftPaddleY,
-                    rightPaddleY
-                });
-            } else {
-                // Multiplayer mode - update the appropriate paddle position
-                if (socket.id === game.player1Id) {
-                    game.leftPaddleY = paddleY;
-                } else if (socket.id === game.player2Id) {
-                    game.rightPaddleY = paddleY;
-                }
-                
-                // Broadcast paddle update to all clients
-                socket.broadcast.emit('pongPaddleUpdate', {
-                    cabinetId,
-                    playerId: socket.id,
-                    paddleY
-                });
+            // Update the appropriate paddle position
+            if (playerId === game.player1Id) {
+                game.leftPaddleY = paddleY;
+            } else if (playerId === game.player2Id) {
+                game.rightPaddleY = paddleY;
             }
+            
+            // Broadcast paddle update to all clients except sender
+            socket.broadcast.emit('pongPaddleUpdate', {
+                cabinetId,
+                playerId,
+                paddleY
+            });
         }
     });
 
