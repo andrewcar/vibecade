@@ -260,6 +260,8 @@ chatInput.setAttribute('autocomplete', 'off');
 chatInput.setAttribute('autocorrect', 'off');
 chatInput.setAttribute('autocapitalize', 'off');
 chatInput.setAttribute('spellcheck', 'false');
+chatInput.setAttribute('enterkeyhint', 'send');
+chatInput.setAttribute('inputmode', 'text');
 chatInput.style.cssText = `
   position: fixed;
   bottom: 20px;
@@ -277,6 +279,7 @@ chatInput.style.cssText = `
   z-index: 1000;
   -webkit-appearance: none;
   border-radius: 4px;
+  pointer-events: auto;
 `;
 document.body.appendChild(chatInput);
 
@@ -285,20 +288,51 @@ const keyboardToggle = document.querySelector('.keyboard-toggle');
 
 // Handle chat input visibility
 let isChatInputVisible = false;
+let isKeyboardVisible = false;
+
+// Function to adjust input position for mobile keyboard
+const adjustForKeyboard = () => {
+  if (isMobileDevice()) {
+    // Move the input field up when keyboard is visible
+    const keyboardHeight = window.innerHeight * 0.4; // Estimate keyboard height as 40% of screen
+    chatInput.style.bottom = isKeyboardVisible ? `${keyboardHeight + 20}px` : '20px';
+    
+    // Scroll to make input visible
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      chatInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }
+};
 
 // Function to toggle chat input
 const toggleChatInput = () => {
   if (!isChatInputVisible) {
     // Show input field
     chatInput.style.display = 'block';
-    chatInput.focus();
+    // Use a timeout to ensure the input is visible before focusing
+    setTimeout(() => {
+      chatInput.focus();
+      if (isMobileDevice()) {
+        // For mobile, we need to explicitly click the input and make it editable
+        chatInput.readOnly = false;
+        chatInput.click();
+        isKeyboardVisible = true;
+        adjustForKeyboard();
+      }
+    }, 50);
     isChatInputVisible = true;
   } else {
     // Hide and clear input field
     chatInput.style.display = 'none';
     const chatText = chatInput.value;
     chatInput.value = '';
+    chatInput.blur();
     isChatInputVisible = false;
+    isKeyboardVisible = false;
+    adjustForKeyboard();
     
     // Update chat text if there was any
     if (chatText) {
@@ -322,11 +356,29 @@ window.addEventListener('keydown', (event) => {
 
 // Handle keyboard toggle button click for mobile
 if (keyboardToggle) {
+  // Use touchend for better mobile response
+  keyboardToggle.addEventListener('touchend', (event) => {
+    event.preventDefault();
+    toggleChatInput();
+  }, { passive: false });
+  
+  // Keep click handler for fallback
   keyboardToggle.addEventListener('click', (event) => {
     event.preventDefault();
     toggleChatInput();
   });
 }
+
+// Make chat input interactive
+chatInput.addEventListener('touchend', (event) => {
+  event.stopPropagation();
+  if (isMobileDevice()) {
+    chatInput.readOnly = false;
+    chatInput.focus();
+    isKeyboardVisible = true;
+    adjustForKeyboard();
+  }
+});
 
 // Prevent movement keys from working while typing and handle Enter
 chatInput.addEventListener('keydown', (event) => {
@@ -334,6 +386,37 @@ chatInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     toggleChatInput();
     event.preventDefault();
+  }
+});
+
+// Handle focus events
+chatInput.addEventListener('focus', () => {
+  isChatInputVisible = true;
+  if (isMobileDevice()) {
+    // Scroll the input into view on mobile and ensure it's editable
+    chatInput.readOnly = false;
+    isKeyboardVisible = true;
+    adjustForKeyboard();
+  }
+});
+
+chatInput.addEventListener('blur', () => {
+  if (isMobileDevice() && isChatInputVisible) {
+    // On mobile, refocus if we're still in chat mode
+    setTimeout(() => {
+      chatInput.readOnly = false;
+      chatInput.focus();
+      isKeyboardVisible = true;
+      adjustForKeyboard();
+    }, 100);
+  }
+});
+
+// Handle viewport changes (keyboard appearing/disappearing)
+window.visualViewport.addEventListener('resize', () => {
+  if (isMobileDevice() && isChatInputVisible) {
+    isKeyboardVisible = window.visualViewport.height < window.innerHeight;
+    adjustForKeyboard();
   }
 });
 
