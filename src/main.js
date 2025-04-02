@@ -161,11 +161,11 @@ const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
 // Generate random spawn point
 const generateRandomSpawnPoint = () => {
-  // Define spawn area boundaries (the central area of the arcade)
-  const minX = -8;
-  const maxX = -2;
-  const minZ = -9;
-  const maxZ = -7;
+  // Define spawn area boundaries (clear area near entrance)
+  const minX = 6;    // Right side of the arcade, away from cabinets
+  const maxX = 12;   // Not too close to the west wall
+  const minZ = 6;    // North of the cabinets
+  const maxZ = 8;    // Not too close to the entrance
   
   // Generate random X and Z position within boundaries
   const x = minX + Math.random() * (maxX - minX);
@@ -349,11 +349,13 @@ const toggleChatInput = () => {
 };
 
 // Handle Enter key for desktop
-window.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && !event.repeat) {
+    event.preventDefault();
+    event.stopPropagation();
     toggleChatInput();
   }
-});
+}, true);
 
 // Handle keyboard toggle button click for mobile
 if (keyboardToggle) {
@@ -860,7 +862,7 @@ const checkCabinetCollisions = () => {
 };
 
 // Load GLTF model with interaction data
-const loadCabinetModel = (path, position, cabinetData, rotation = 0, cabinetNumber) => {
+const loadCabinetModel = (path, position, cabinetData, rotation = 0, cabinetNumber, rotateLabel = false) => {
   // Create a group to hold both the cabinet and its number
   const modelGroup = new THREE.Group();
   
@@ -874,18 +876,6 @@ const loadCabinetModel = (path, position, cabinetData, rotation = 0, cabinetNumb
     number: cabinetNumber
   };
 
-  // Commented out GLTF loading for performance testing
-  /*
-  gltfLoader.load(
-    path,
-    (gltf) => {
-      console.log('Cabinet model loaded successfully:', gltf);
-      const model = gltf.scene;
-      model.scale.set(0.00375, 0.00375, 0.00375);
-      model.rotation.y = rotation;
-      modelGroup.add(model);
-  */
-      
   // Create number label for this cabinet
   const canvas = document.createElement('canvas');
   canvas.width = 128;
@@ -915,44 +905,33 @@ const loadCabinetModel = (path, position, cabinetData, rotation = 0, cabinetNumb
   const labelGeometry = new THREE.PlaneGeometry(0.3, 0.3);
   const label = new THREE.Mesh(labelGeometry, material);
   
-  // Position label relative to cabinet within the group
-  const labelOffset = rotation === 0 ? 0 : 0;
-  label.position.set(
-    (rotation === 0 ? -0.8 : 0.8), // Keep the left/right offset
-    0.01, // Almost directly on floor (slight offset to prevent z-fighting)
-    0 // Aligned with cabinet center
-  );
-  label.rotation.x = -Math.PI / 2; // Lay flat on floor
+  // Position label on floor
+  label.position.set(0, 0.01, 0);
+  label.rotation.x = -Math.PI / 2;
   
-  // Set rotation based on which row the cabinet belongs to
-  if (cabinetNumber <= 3) { // Front row cabinets (1-3)
-    label.rotation.z = Math.PI; // 180-degree rotation for front row numbers
-  } else { // Back row cabinets (9-11)
-    label.rotation.y = 0; // No rotation needed for back row
+  // Handle label rotations
+  if (cabinetNumber <= 3) {
+    // Front row cabinets (1-3)
+    label.rotation.z = Math.PI;  // 180-degree rotation for front row numbers
+  } else if (cabinetNumber === 11) {
+    // Cabinet 11
+    label.rotation.z = Math.PI/2;  // 90 degrees clockwise
+  } else if (cabinetNumber === 9 || cabinetNumber === 10) {
+    // Cabinets 9 and 10
+    label.rotation.z = 0;  // 180 degrees from original orientation
   }
   
   modelGroup.add(label);
   
   // Position the entire group
   modelGroup.position.set(position.x, position.y, position.z);
+  modelGroup.rotation.y = rotation;
   
   scene.add(modelGroup);
-  cabinets.push(modelGroup); // Push the entire modelGroup instead of just the model
+  cabinets.push(modelGroup);
   
   // Initialize cabinet boxes when loading cabinets
   cabinetBoxes.push(createCabinetBox(modelGroup));
-  /*
-    },
-    (xhr) => {
-      console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-      const totalProgress = (loadedCabinets + (xhr.loaded / xhr.total)) / totalCabinets;
-      document.querySelector('.loading-bar').style.width = `${totalProgress * 100}%`;
-    },
-    (error) => {
-      console.error('Error loading cabinet model:', error);
-    }
-  );
-  */
 };
 
 // Cabinet data for front row (cabinets 1-3)
@@ -1004,16 +983,334 @@ cabinets.length = 0;
 
 // Load front row cabinets (1-3)
 frontRowData.forEach((data, index) => {
-  const x = -10 + (index * 2.5);
-  const z = -6.5;
-  loadCabinetModel('assets/gameCabinet/scene.gltf', { x, y: 0, z }, data, Math.PI, index + 1);
+  const z = -4 + (index * 2.5);  // Original x becomes negative z after 90° rotation, moved 1 unit south
+  const x = 3.5;  // Original z becomes x after 90° rotation
+  
+  // Create cabinet group
+  const modelGroup = new THREE.Group();
+  
+  // Create main cabinet body (rotated 90° within the group)
+  const cabinetGeometry = new THREE.BoxGeometry(0.7, 2.1, 1.0); // Swapped width and depth, height from Pong cabinet
+  const cabinetMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const cabinet = new THREE.Mesh(cabinetGeometry, cabinetMaterial);
+  modelGroup.add(cabinet);
+  
+  // Create control panel wedge
+  const wedgeShape = new THREE.Shape();
+  wedgeShape.moveTo(-0.35, 0);      // Start at bottom left (swapped x for z due to 90° rotation)
+  wedgeShape.lineTo(0.35, 0);       // Bottom right
+  wedgeShape.lineTo(0.35, 0.4);     // Top right
+  wedgeShape.lineTo(-0.35, 0.8);    // Top left (higher to create slope)
+  wedgeShape.lineTo(-0.35, 0);      // Back to start
+
+  const extrudeSettings = {
+    depth: 1.0,           // Match cabinet width
+    bevelEnabled: false
+  };
+
+  const wedgeGeometry = new THREE.ExtrudeGeometry(wedgeShape, extrudeSettings);
+  const wedgeMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const wedge = new THREE.Mesh(wedgeGeometry, wedgeMaterial);
+  
+  // Position and rotate wedge (adjusted for 90° cabinet rotation)
+  wedge.position.set(0.35, 1.5, -0.5);
+  wedge.rotation.set(Math.PI / 2, 0, 0);
+  modelGroup.add(wedge);
+
+  // Create back panel
+  const backPanelGeometry = new THREE.BoxGeometry(0.3, 0.6, 1.0);  // Swapped width and depth
+  const backPanelMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const backPanel = new THREE.Mesh(backPanelGeometry, backPanelMaterial);
+  backPanel.position.set(0.15, 1.7, 0);
+  modelGroup.add(backPanel);
+  
+  // Create header shape
+  const headerShape = new THREE.Shape();
+  headerShape.moveTo(-0.5, 0);      // Bottom left
+  headerShape.lineTo(0.5, 0);       // Bottom right
+  headerShape.lineTo(0.4, 0.3);     // Top right
+  headerShape.lineTo(-0.4, 0.3);    // Top left
+  headerShape.lineTo(-0.5, 0);      // Back to start
+  
+  const headerExtrudeSettings = {
+    depth: 0.2,
+    bevelEnabled: false
+  };
+  
+  const headerGeometry3D = new THREE.ExtrudeGeometry(headerShape, headerExtrudeSettings);
+  const headerMaterial3D = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const header = new THREE.Mesh(headerGeometry3D, headerMaterial3D);
+  
+  // Position and rotate header (adjusted for 90° cabinet rotation)
+  header.position.set(0.04, 2.0, -0.5);
+  header.rotation.set(0, -Math.PI/2, 0);
+  modelGroup.add(header);
+
+  // Create "YOUR GAME HERE" text
+  const titleCanvas = document.createElement('canvas');
+  titleCanvas.width = 512;
+  titleCanvas.height = 128;
+  const titleCtx = titleCanvas.getContext('2d');
+
+  // Clear background
+  titleCtx.fillStyle = 'rgba(0,0,0,0)';
+  titleCtx.fillRect(0, 0, titleCanvas.width, titleCanvas.height);
+
+  // Draw text with retro arcade style
+  titleCtx.fillStyle = '#00ff00'; // Classic arcade green
+  titleCtx.font = 'bold 36px "Press Start 2P"';
+  titleCtx.textAlign = 'center';
+  titleCtx.textBaseline = 'middle';
+  titleCtx.shadowColor = '#00ff00';
+  titleCtx.shadowBlur = 15;
+  titleCtx.fillText('YOUR GAME', titleCanvas.width/2, titleCanvas.height/2 - 20);
+  titleCtx.fillText('HERE', titleCanvas.width/2, titleCanvas.height/2 + 20);
+
+  const textTexture = new THREE.CanvasTexture(titleCanvas);
+  const textMaterial = new THREE.MeshBasicMaterial({
+    map: textTexture,
+    transparent: true,
+    side: THREE.DoubleSide,
+    emissive: 0x00ff00,
+    emissiveIntensity: 2.0
+  });
+
+  const textGeometry = new THREE.PlaneGeometry(0.8, 0.2);
+  const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+  textMesh.position.set(0.65, 1.85, 0); // Moved one more foot in same direction
+  textMesh.rotation.set(0, Math.PI/2, 0); // Rotated 180° from previous rotation
+  modelGroup.add(textMesh);
+  
+  // Create screen
+  const screenGeometry = new THREE.PlaneGeometry(0.8, 0.6);
+  const screenMaterial = new THREE.MeshBasicMaterial({
+    color: 0x000000,
+    emissive: 0x000000
+  });
+  const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+  screen.position.set(-0.27, 1.5, 0); // Adjusted for 90° rotation
+  screen.rotation.set(0, -Math.PI/2, 0); // Rotated to face east
+  modelGroup.add(screen);
+  
+  // Create number label
+  const canvas = document.createElement('canvas');
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+
+  // Clear background
+  ctx.fillStyle = 'rgba(0,0,0,0)';
+  ctx.fillRect(0, 0, 128, 128);
+
+  // Draw number
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 80px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText((index + 1).toString(), 64, 64);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    side: THREE.DoubleSide
+  });
+
+  const labelGeometry = new THREE.PlaneGeometry(0.3, 0.3);
+  const label = new THREE.Mesh(labelGeometry, material);
+  
+  // Position label on floor
+  label.position.set(0, 0.01, 0);
+  label.rotation.x = -Math.PI / 2;  // Keep flat on ground
+  label.rotation.z = 0;  // Reset Z rotation to match new cabinet orientations
+  
+  modelGroup.add(label);
+  
+  // Position and rotate cabinet
+  modelGroup.position.set(x, 0, z);
+  // All front row cabinets get the same rotation
+  modelGroup.rotation.y = 0;  // All cabinets face the same direction
+  
+  // Add user data for interaction
+  modelGroup.userData = {
+    id: `placeholder-${index + 1}`,
+    name: `Cabinet ${index + 1}`,
+    description: 'Placeholder cabinet',
+    interactive: true,
+    number: index + 1
+  };
+  
+  scene.add(modelGroup);
+  cabinets.push(modelGroup);
+  
+  // Initialize cabinet box
+  cabinetBoxes.push(createCabinetBox(modelGroup));
 });
 
 // Load back row cabinets (9-11)
 backRowData.forEach((data, index) => {
-  const x = -10 + (index * 2.5);
-  const z = -9.5;
-  loadCabinetModel('assets/gameCabinet/scene.gltf', { x, y: 0, z }, data, 0, index + 9);
+  const z = -4 + (index * 2.5);  // Original x becomes negative z after 90° rotation, moved 1 unit south
+  const x = -4.5;  // Original z becomes x after 90° rotation
+  
+  // Create placeholder cabinets for all back row slots (9-11)
+  // Create cabinet group
+  const modelGroup = new THREE.Group();
+  
+  // Create main cabinet body (rotated 90° within the group)
+  const cabinetGeometry = new THREE.BoxGeometry(0.7, 2.1, 1.0); // Swapped width and depth, height from Pong cabinet
+  const cabinetMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const cabinet = new THREE.Mesh(cabinetGeometry, cabinetMaterial);
+  modelGroup.add(cabinet);
+  
+  // Create control panel wedge
+  const wedgeShape = new THREE.Shape();
+  wedgeShape.moveTo(-0.35, 0);      // Start at bottom left (swapped x for z due to 90° rotation)
+  wedgeShape.lineTo(0.35, 0);       // Bottom right
+  wedgeShape.lineTo(0.35, 0.4);     // Top right
+  wedgeShape.lineTo(-0.35, 0.8);    // Top left (higher to create slope)
+  wedgeShape.lineTo(-0.35, 0);      // Back to start
+
+  const extrudeSettings = {
+    depth: 1.0,           // Match cabinet width
+    bevelEnabled: false
+  };
+
+  const wedgeGeometry = new THREE.ExtrudeGeometry(wedgeShape, extrudeSettings);
+  const wedgeMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const wedge = new THREE.Mesh(wedgeGeometry, wedgeMaterial);
+  
+  // Position and rotate wedge (adjusted for 90° cabinet rotation)
+  wedge.position.set(0.35, 1.5, -0.5);
+  wedge.rotation.set(Math.PI / 2, 0, 0);
+  modelGroup.add(wedge);
+
+  // Create back panel
+  const backPanelGeometry = new THREE.BoxGeometry(0.3, 0.6, 1.0);  // Swapped width and depth
+  const backPanelMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const backPanel = new THREE.Mesh(backPanelGeometry, backPanelMaterial);
+  backPanel.position.set(0.15, 1.7, 0);
+  modelGroup.add(backPanel);
+  
+  // Create header shape
+  const headerShape = new THREE.Shape();
+  headerShape.moveTo(-0.5, 0);      // Bottom left
+  headerShape.lineTo(0.5, 0);       // Bottom right
+  headerShape.lineTo(0.4, 0.3);     // Top right
+  headerShape.lineTo(-0.4, 0.3);    // Top left
+  headerShape.lineTo(-0.5, 0);      // Back to start
+  
+  const headerExtrudeSettings = {
+    depth: 0.2,
+    bevelEnabled: false
+  };
+  
+  const headerGeometry3D = new THREE.ExtrudeGeometry(headerShape, headerExtrudeSettings);
+  const headerMaterial3D = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const header = new THREE.Mesh(headerGeometry3D, headerMaterial3D);
+  
+  // Position and rotate header (adjusted for 90° cabinet rotation)
+  header.position.set(0.04, 2.0, -0.5);
+  header.rotation.set(0, -Math.PI/2, 0);
+  modelGroup.add(header);
+
+  // Create "YOUR GAME HERE" text
+  const titleCanvas = document.createElement('canvas');
+  titleCanvas.width = 512;
+  titleCanvas.height = 128;
+  const titleCtx = titleCanvas.getContext('2d');
+
+  // Clear background
+  titleCtx.fillStyle = 'rgba(0,0,0,0)';
+  titleCtx.fillRect(0, 0, titleCanvas.width, titleCanvas.height);
+
+  // Draw text with retro arcade style
+  titleCtx.fillStyle = '#00ff00'; // Classic arcade green
+  titleCtx.font = 'bold 36px "Press Start 2P"';
+  titleCtx.textAlign = 'center';
+  titleCtx.textBaseline = 'middle';
+  titleCtx.shadowColor = '#00ff00';
+  titleCtx.shadowBlur = 15;
+  titleCtx.fillText('YOUR GAME', titleCanvas.width/2, titleCanvas.height/2 - 20);
+  titleCtx.fillText('HERE', titleCanvas.width/2, titleCanvas.height/2 + 20);
+
+  const textTexture = new THREE.CanvasTexture(titleCanvas);
+  const textMaterial = new THREE.MeshBasicMaterial({
+    map: textTexture,
+    transparent: true,
+    side: THREE.DoubleSide,
+    emissive: 0x00ff00,
+    emissiveIntensity: 2.0
+  });
+
+  const textGeometry = new THREE.PlaneGeometry(0.8, 0.2);
+  const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+  textMesh.position.set(0.65, 1.85, 0); // Moved one more foot in same direction
+  textMesh.rotation.set(0, Math.PI/2, 0); // Rotated 180° from previous rotation
+  modelGroup.add(textMesh);
+  
+  // Create screen
+  const screenGeometry = new THREE.PlaneGeometry(0.8, 0.6);
+  const screenMaterial = new THREE.MeshBasicMaterial({
+    color: 0x000000,
+    emissive: 0x000000
+  });
+  const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+  screen.position.set(-0.27, 1.5, 0); // Adjusted for 90° rotation
+  screen.rotation.set(0, -Math.PI/2, 0); // Rotated to face east
+  modelGroup.add(screen);
+  
+  // Create number label
+  const canvas = document.createElement('canvas');
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+
+  // Clear background
+  ctx.fillStyle = 'rgba(0,0,0,0)';
+  ctx.fillRect(0, 0, 128, 128);
+
+  // Draw number
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 80px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText((index + 9).toString(), 64, 64);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    side: THREE.DoubleSide
+  });
+
+  const labelGeometry = new THREE.PlaneGeometry(0.3, 0.3);
+  const label = new THREE.Mesh(labelGeometry, material);
+  
+  // Position label on floor
+  label.position.set(0, 0.01, 0);
+  label.rotation.x = -Math.PI / 2;  // Keep flat on ground
+  label.rotation.z = 0;  // Reset Z rotation to match new cabinet orientations
+  
+  modelGroup.add(label);
+  
+  // Position and rotate cabinet
+  modelGroup.position.set(x, 0, z);
+  modelGroup.rotation.y = Math.PI;  // Face south
+  
+  // Add user data for interaction
+  modelGroup.userData = {
+    id: `placeholder-${index + 9}`,
+    name: `Cabinet ${index + 9}`,
+    description: 'Placeholder cabinet',
+    interactive: true,
+    number: index + 9
+  };
+  
+  scene.add(modelGroup);
+  cabinets.push(modelGroup);
+  
+  // Initialize cabinet box
+  cabinetBoxes.push(createCabinetBox(modelGroup));
 });
 
 // Create Pong cabinet (cabinet 12)
@@ -1143,7 +1440,7 @@ const createPongCabinet = () => {
     ballX: 256,
     ballY: 256,
     ballSize: 8,
-    BALL_BASE_SPEED: 3, // Constant base speed
+    BALL_BASE_SPEED: 8, // Constant base speed
     ballSpeedX: 4, // Initial speed
     ballSpeedY: 0,
     lastPaddleY: 216,
@@ -1738,7 +2035,8 @@ const createPongCabinet = () => {
   modelGroup.userData.flashScreen = flashScreen;
   
   // Position the cabinet
-  modelGroup.position.set(2.5, 0, -9.5); // Next to cabinet 11
+  modelGroup.position.set(-0.5, 0, 0.5); // Centered between front and back rows
+  modelGroup.rotation.y = 0; // Rotate to face east (90 degrees clockwise from north)
   
   scene.add(modelGroup);
   cabinets.push(modelGroup);
@@ -2563,7 +2861,6 @@ const animate = () => {
     const portalDistance = playerPos.distanceTo(exitPortalGroup.position);
     
     if (portalDistance < 5) {
-        updateLog(`Near portal - distance: ${portalDistance.toFixed(2)} units`);
         console.log('Player position:', {
             x: playerPos.x.toFixed(2),
             y: playerPos.y.toFixed(2),

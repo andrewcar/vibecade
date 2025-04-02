@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const app = express();
 app.use(cors({
-    origin: ["https://vibe.andrewos.com", "http://localhost:5173", "https://www.andrewos.com"],
+    origin: ["https://andrewos.com", "http://localhost:5173", "https://www.andrewos.com"],
     methods: ["GET", "POST"]
 }));
 
@@ -38,7 +38,7 @@ try {
 
 const io = new Server(server, {
     cors: {
-        origin: ["https://vibe.andrewos.com", "http://localhost:5173", "https://www.andrewos.com"],
+        origin: ["https://andrewos.com", "http://localhost:5173", "https://www.andrewos.com"],
         methods: ["GET", "POST"]
     }
 });

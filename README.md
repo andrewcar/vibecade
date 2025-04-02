@@ -62,9 +62,10 @@ The arcade features designated poster slots for advertising and decoration:
 ## Features
 
 ### Arcade Environment
-- 7 interactive game cabinets arranged in two rows:
-  - Front row (cabinets 1-3): Fly Pieter, Garden Club, and Pizza Legends
-  - Back row (cabinets 9-12): Vibe Synth, Pixel Paint, Retro Racer, and Pong
+- Game cabinets arranged in three rows:
+  - West-facing row (cabinets 1-3): Fly Pieter, Garden Club, and Pizza Legends
+  - East-facing row (cabinets 9-11): Vibe Synth, Pixel Paint, and Retro Racer
+  - Center row (cabinet 12): Pong/PING cabinet facing east, aligned between the other rows
 - Dynamic neon lighting with pulsing effects
 - Background music system:
   - Intelligent domain detection for production vs development
@@ -132,6 +133,30 @@ The arcade features designated poster slots for advertising and decoration:
     - color: Player avatar color
     - speed: Movement speed (in m/s)
     - ref: Origin game URL for return portal
+- Chat System:
+  - Press Enter to open chat input
+  - Type message and press Enter again to send
+  - Messages appear in chat bubbles above players' heads
+  - Chat bubbles use sprite-based billboarding to always face the camera
+  - Semi-transparent black background with white text
+  - "Press Start 2P" retro font for authentic arcade feel
+  - Messages visible to all players in real-time
+  - Dynamic text features:
+    - Automatic font size adjustment based on message length
+    - Text wrapping for long messages
+    - Bubble size adapts to content
+    - Minimum font size of 8px for readability
+  - Message timing:
+    - Messages automatically fade after 5 seconds
+    - Timer resets when new message is sent
+    - Messages remain visible until timeout or new message
+  - Platform-specific optimizations:
+    - Desktop: Improved Enter key handling with event capturing
+    - Mobile: Touch-optimized keyboard toggle and positioning
+    - Proper event propagation and prevention
+    - No interference with game controls while chatting
+  - Proper handling of font loading with fallback to monospace
+  - Chat labels always readable from any angle or distance
 
 ### Game Cabinets
 - Each cabinet uses a detailed GLTF 3D model with:
@@ -203,6 +228,11 @@ The arcade features designated poster slots for advertising and decoration:
     - Messages automatically fade after 5 seconds
     - Timer resets when new message is sent
     - Messages remain visible until timeout or new message
+  - Platform-specific optimizations:
+    - Desktop: Improved Enter key handling with event capturing
+    - Mobile: Touch-optimized keyboard toggle and positioning
+    - Proper event propagation and prevention
+    - No interference with game controls while chatting
   - Proper handling of font loading with fallback to monospace
   - Chat labels always readable from any angle or distance
 
@@ -229,7 +259,7 @@ The arcade features designated poster slots for advertising and decoration:
 - Gameplay Features:
   - First player to score 10 points wins
   - Controls:
-    - Desktop: Arrow keys (up/down) for paddle movement
+    - Desktop: Arrow keys (up/down) for paddle movement (8 units/frame speed)
     - Mobile: Virtual joystick with vertical movement for paddle control
     - Smooth, responsive paddle movement on both platforms
   - AI-controlled or player-controlled right paddle
@@ -514,9 +544,10 @@ The arcade features designated poster slots for advertising and decoration:
 ### Current State
 - Players spawn at random positions in the central arcade area with safe distance enforcement
 - Intelligent collision handling prevents players from getting stuck together
-- 7 cabinets arranged in two rows:
-  - Front row: Cabinets 1-3 (Fly Pieter, Garden Club, Pizza Legends)
-  - Back row: Cabinets 9-12 (Vibe Synth, Pixel Paint, Retro Racer, Pong)
+- Cabinets arranged in three distinct rows:
+  - West-facing row: Cabinets 1-3 (Fly Pieter, Garden Club, Pizza Legends) at x = 3.5
+  - East-facing row: Cabinets 9-11 (Vibe Synth, Pixel Paint, Retro Racer) at x = -4.5
+  - Center row: Cabinet 12 (Pong/PING) at x = -0.5, facing east
 - Cabinet numbers are placed directly on the floor, aligned with their respective cabinets
 - VIBECADE neon sign is positioned on the south wall with proper spacing
 - Ceiling is solid black without text
@@ -649,7 +680,7 @@ The server will automatically detect the environment and use HTTPS if SSL certif
 
 ### Publishing
 
-To publish updates to vibe.andrewos.com:
+To publish updates to andrewos.com/vibe:
 
 1. Update version numbers:
    ```bash
@@ -679,4 +710,4 @@ To publish updates to vibe.andrewos.com:
    git push
    ```
 
-The changes will be live at vibe.andrewos.com once the push is complete.
+The changes will be live at andrewos.com/vibe once the push is complete.

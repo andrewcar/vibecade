@@ -1043,7 +1043,7 @@ export const createArcade = (scene, textureLoader) => {
     ctx.textBaseline = 'middle';
     ctx.shadowColor = '#ff00ff';  // Added shadow to match logo glow
     ctx.shadowBlur = 40;  // Match logo's glow effect
-    ctx.fillText('1.0.4', canvas.width/2, canvas.height/2);  // Updated to 1.0.4
+    ctx.fillText('1.0.7', canvas.width/2, canvas.height/2);  // Updated to 1.0.7
 
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshBasicMaterial({
