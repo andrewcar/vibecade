@@ -11,6 +11,16 @@ app.use(cors({
     methods: ["GET", "POST"]
 }));
 
+// Serve static files with cache control
+app.use(express.static('dist', {
+    maxAge: '0',
+    setHeaders: (res, path) => {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+    }
+}));
+
 let server;
 
 // Try to create HTTPS server, fall back to HTTP if certificates not available
