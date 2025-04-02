@@ -1025,6 +1025,45 @@ export const createArcade = (scene, textureLoader) => {
   const arcadeElements = createArcadeElements();
   console.log('Arcade elements created:', arcadeElements);
   
+  // Add version label
+  const createVersionLabel = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+
+    // Clear background
+    ctx.fillStyle = 'rgba(0,0,0,0)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw version text
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '48px "Press Start 2P"';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('v1.0.0', 10, canvas.height/2);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+
+    const geometry = new THREE.PlaneGeometry(1.5, 0.4);
+    const versionMesh = new THREE.Mesh(geometry, material);
+    
+    // Position on north wall, bottom-left corner
+    versionMesh.position.set(-12, 0.4, 9.9); // Left side of north wall, just above floor
+    versionMesh.rotation.y = Math.PI; // Face into the arcade
+    
+    return versionMesh;
+  };
+
+  // Add version label to scene (add this near where other elements are added to scene)
+  const versionLabel = createVersionLabel();
+  scene.add(versionLabel);
+
   return {
     floor,
     ceiling,
