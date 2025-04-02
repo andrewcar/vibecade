@@ -256,6 +256,10 @@ window.addEventListener('keyup', onKeyUp);
 const chatInput = document.createElement('input');
 chatInput.type = 'text';
 chatInput.id = 'chat-input';
+chatInput.setAttribute('autocomplete', 'off');
+chatInput.setAttribute('autocorrect', 'off');
+chatInput.setAttribute('autocapitalize', 'off');
+chatInput.setAttribute('spellcheck', 'false');
 chatInput.style.cssText = `
   position: fixed;
   bottom: 20px;
@@ -271,6 +275,8 @@ chatInput.style.cssText = `
   font-size: 14px;
   display: none;
   z-index: 1000;
+  -webkit-appearance: none;
+  border-radius: 4px;
 `;
 document.body.appendChild(chatInput);
 
