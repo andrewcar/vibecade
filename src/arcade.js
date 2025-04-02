@@ -1036,7 +1036,7 @@ export const createArcade = (scene, textureLoader) => {
     ctx.textBaseline = 'middle';
     ctx.shadowColor = '#ff00ff';  // Added shadow to match logo glow
     ctx.shadowBlur = 40;  // Match logo's glow effect
-    ctx.fillText('1.0.13', canvas.width/2, canvas.height/2);  // Updated to 1.0.13
+    ctx.fillText('1.0.14', canvas.width/2, canvas.height/2);  // Updated to 1.0.14
 
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshBasicMaterial({
@@ -1048,9 +1048,9 @@ export const createArcade = (scene, textureLoader) => {
     const geometry = new THREE.PlaneGeometry(1.2, 0.3);
     const versionMesh = new THREE.Mesh(geometry, material);
     
-    // Position under VIBECADE logo - moved even further left
-    versionMesh.position.set(-11.2, 2.0, -9.75);  // Moved further left (x: -10.2 to -11.2)
-    versionMesh.rotation.y = 0;
+    // Position in prizes nook, against the wall and slightly north
+    versionMesh.position.set(-17.4, 0.4, 3.5);  // Moved east to -17.4 (against nook wall), north to 3.5
+    versionMesh.rotation.y = Math.PI / 2;  // Rotate to face east
     
     return versionMesh;
   };
