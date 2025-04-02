@@ -1037,11 +1037,13 @@ export const createArcade = (scene, textureLoader) => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw version text
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '48px "Press Start 2P"';
-    ctx.textAlign = 'left';
+    ctx.fillStyle = '#ff00ff';  // Changed to match VIBECADE logo's magenta color
+    ctx.font = '36px "Press Start 2P"';
+    ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('v1.0.0', 10, canvas.height/2);
+    ctx.shadowColor = '#ff00ff';  // Added shadow to match logo glow
+    ctx.shadowBlur = 40;  // Match logo's glow effect
+    ctx.fillText('1.0.2', canvas.width/2, canvas.height/2);  // Removed 'v' prefix and updated to 1.0.2
 
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshBasicMaterial({
@@ -1050,12 +1052,12 @@ export const createArcade = (scene, textureLoader) => {
       side: THREE.DoubleSide
     });
 
-    const geometry = new THREE.PlaneGeometry(1.5, 0.4);
+    const geometry = new THREE.PlaneGeometry(1.2, 0.3);  // Increased from 0.8x0.2 to 1.2x0.3
     const versionMesh = new THREE.Mesh(geometry, material);
     
-    // Position on north wall, bottom-left corner
-    versionMesh.position.set(-12, 0.4, 9.9); // Left side of north wall, just above floor
-    versionMesh.rotation.y = Math.PI; // Face into the arcade
+    // Position under VIBECADE logo - moved down, left, and away from wall
+    versionMesh.position.set(-8.5, 2.0, -9.75);  // Moved left (x: -8 to -8.5), down (y: 2.2 to 2.0), forward (z: -9.85 to -9.75)
+    versionMesh.rotation.y = 0;
     
     return versionMesh;
   };
