@@ -651,21 +651,32 @@ The server will automatically detect the environment and use HTTPS if SSL certif
 
 To publish updates to vibe.andrewos.com:
 
-1. Build the project:
-```bash
-npm run build
-```
+1. Update version numbers:
+   ```bash
+   # Update version in package.json
+   # Update version in src/arcade.js (in createVersionLabel function)
+   ```
 
-2. Copy the built files to the vibe directory:
-```bash
-cp -r dist/* vibe/
-```
+2. Build the project:
+   ```bash
+   npm run build
+   ```
 
-3. Commit and push the changes:
-```bash
-git add vibe/
-git commit -m "Update vibe with [your changes]"
-git push
-```
+3. Copy the built files to the andrewOS repository:
+   ```bash
+   # Clone andrewOS if you haven't already
+   git clone https://github.com/andrewcar/andrewOS.git andrewos-fresh
+   
+   # Copy built files to the vibe directory
+   cp -r dist/* andrewos-fresh/vibe/
+   ```
+
+4. Commit and push the changes:
+   ```bash
+   cd andrewos-fresh
+   git add vibe/
+   git commit -m "Update vibe to version X.Y.Z"
+   git push
+   ```
 
 The changes will be live at vibe.andrewos.com once the push is complete.
