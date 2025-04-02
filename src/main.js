@@ -2209,14 +2209,19 @@ const togglePerspective = () => {
     
     // Move camera back and up for third person view
     camera.position.set(
-      bodyModel.position.x - Math.sin(currentRotation) * 5,
-      bodyModel.position.y + 2,
-      bodyModel.position.z - Math.cos(currentRotation) * 5
+      bodyModel.position.x - Math.sin(currentRotation) * 8, // Increased from 5 to 8
+      bodyModel.position.y + 3, // Increased from 2 to 3
+      bodyModel.position.z - Math.cos(currentRotation) * 8 // Increased from 5 to 8
     );
     
     // Set camera target to player position
     controls.target.copy(bodyModel.position);
     controls.target.y += 1;
+    
+    // Make player model visible in third person
+    if (bodyModel) {
+      bodyModel.visible = true;
+    }
   } else {
     // Return to first person view
     camera.position.copy(bodyModel.position);
@@ -2228,6 +2233,11 @@ const togglePerspective = () => {
       bodyModel.position.y + 1.6,
       bodyModel.position.z + Math.cos(bodyModel.rotation.y)
     );
+    
+    // Hide player model in first person
+    if (bodyModel) {
+      bodyModel.visible = false;
+    }
   }
   
   controls.update();
