@@ -1,25 +1,34 @@
-import { Server } from 'socket.io';
-import express from 'express';
-import { createServer } from 'https';
-import cors from 'cors';
-import fs from 'fs';
+const { Server } = require('socket.io');
+const express = require('express');
+const { createServer: createHttpServer } = require('http');
+const { createServer: createHttpsServer } = require('https');
+const cors = require('cors');
+const fs = require('fs');
 
 const app = express();
 app.use(cors({
-    origin: ["https://vibe.andrewos.com", "http://localhost:5173"],
+    origin: ["https://vibe.andrewos.com", "http://localhost:5173", "https://www.andrewos.com"],
     methods: ["GET", "POST"]
 }));
 
-// Read SSL certificates - you'll need to provide these
-const httpsOptions = {
-    key: fs.readFileSync(process.env.SSL_KEY_PATH || '/path/to/your/privkey.pem'),
-    cert: fs.readFileSync(process.env.SSL_CERT_PATH || '/path/to/your/fullchain.pem')
-};
+let server;
 
-const httpsServer = createServer(httpsOptions, app);
-const io = new Server(httpsServer, {
+// Try to create HTTPS server, fall back to HTTP if certificates not available
+try {
+    const httpsOptions = {
+        key: fs.readFileSync(process.env.SSL_KEY_PATH || './privkey.pem'),
+        cert: fs.readFileSync(process.env.SSL_CERT_PATH || './fullchain.pem')
+    };
+    server = createHttpsServer(httpsOptions, app);
+    console.log('Created HTTPS server');
+} catch (error) {
+    console.log('Failed to create HTTPS server, falling back to HTTP:', error.message);
+    server = createHttpServer(app);
+}
+
+const io = new Server(server, {
     cors: {
-        origin: ["https://vibe.andrewos.com", "http://localhost:5173"],
+        origin: ["https://vibe.andrewos.com", "http://localhost:5173", "https://www.andrewos.com"],
         methods: ["GET", "POST"]
     }
 });
@@ -350,6 +359,6 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-httpsServer.listen(PORT, () => {
-    console.log(`Socket.IO server running on port ${PORT}`);
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT} (${server instanceof require('https').Server ? 'HTTPS' : 'HTTP'})`);
 }); 

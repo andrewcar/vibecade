@@ -727,14 +727,14 @@ export const createArcade = (scene, textureLoader) => {
       // Special case for HIGH SCORE poster (index 2)
       if (index === 2) {
         // Load the therube.jpg image
-        const texture = textureLoader.load('/assets/images/therube.jpg');
+        const texture = textureLoader.load('/vibe/assets/images/therube.jpg');
         texture.colorSpace = THREE.SRGBColorSpace;
         return texture;
       }
       // Special case for LEVEL UP poster (index 1)
       if (index === 1) {
         // Load the therube2.jpg image
-        const texture = textureLoader.load('/assets/images/therube2.jpg');
+        const texture = textureLoader.load('/vibe/assets/images/therube2.jpg');
         texture.colorSpace = THREE.SRGBColorSpace;
         return texture;
       }

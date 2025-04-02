@@ -6,10 +6,11 @@ class MultiplayerManager {
     constructor(scene) {
         this.scene = scene;
         // Use secure WebSocket in production, fallback to local in development
-        const isProduction = window.location.hostname === 'vibe.andrewos.com';
+        const isProduction = window.location.hostname === 'vibe.andrewos.com' || 
+                           window.location.hostname === 'www.andrewos.com';
         const serverUrl = isProduction
             ? 'https://vibecade.glitch.me'  // Glitch WebSocket server
-            : `http://${window.location.hostname}:3000`;  // Development server
+            : `https://${window.location.hostname}:3000`;  // Development server
             
         this.socket = io(serverUrl);
         this.players = new Map();

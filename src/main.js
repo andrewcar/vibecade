@@ -59,11 +59,12 @@ const musicPlayer = {
   loadAndPlayTrack(index) {
     if (index >= 0 && index < this.playlist.length) {
       this.currentTrack = index;
-      this.audio.src = `/assets/music/${this.playlist[index]}`;
+      const baseUrl = window.location.hostname === 'www.andrewos.com' ? 'https://www.andrewos.com' : 'https://andrewos.com';
+      this.audio.src = `${baseUrl}/vibe/assets/music/${this.playlist[index]}`;
       this.audio.play().catch(error => {
         console.log('Audio playback failed:', error);
       });
-      console.log('Now playing:', this.playlist[index]); // Add logging
+      console.log('Now playing:', this.playlist[index]);
     }
   },
   
@@ -273,40 +274,20 @@ chatInput.style.cssText = `
 `;
 document.body.appendChild(chatInput);
 
+// Get keyboard toggle button
+const keyboardToggle = document.querySelector('.keyboard-toggle');
+
 // Handle chat input visibility
 let isChatInputVisible = false;
-window.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
-    if (!isChatInputVisible) {
-      // Show input field
-      chatInput.style.display = 'block';
-      chatInput.focus();
-      isChatInputVisible = true;
-    } else {
-      // Hide and clear input field
-      chatInput.style.display = 'none';
-      const chatText = chatInput.value;
-      chatInput.value = '';
-      isChatInputVisible = false;
-      
-      // Update chat text if there was any
-      if (chatText) {
-        if (isThirdPerson) {
-          bodyModel.updateChatText(chatText);
-        } else {
-          bodyModel.updateChatText(chatText);
-        }
-        // Emit chat message to other players
-        multiplayerManager.socket.emit('chatMessage', { text: chatText });
-      }
-    }
-  }
-});
 
-// Prevent movement keys from working while typing and handle Enter
-chatInput.addEventListener('keydown', (event) => {
-  event.stopPropagation();
-  if (event.key === 'Enter') {
+// Function to toggle chat input
+const toggleChatInput = () => {
+  if (!isChatInputVisible) {
+    // Show input field
+    chatInput.style.display = 'block';
+    chatInput.focus();
+    isChatInputVisible = true;
+  } else {
     // Hide and clear input field
     chatInput.style.display = 'none';
     const chatText = chatInput.value;
@@ -323,6 +304,29 @@ chatInput.addEventListener('keydown', (event) => {
       // Emit chat message to other players
       multiplayerManager.socket.emit('chatMessage', { text: chatText });
     }
+  }
+};
+
+// Handle Enter key for desktop
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    toggleChatInput();
+  }
+});
+
+// Handle keyboard toggle button click for mobile
+if (keyboardToggle) {
+  keyboardToggle.addEventListener('click', (event) => {
+    event.preventDefault();
+    toggleChatInput();
+  });
+}
+
+// Prevent movement keys from working while typing and handle Enter
+chatInput.addEventListener('keydown', (event) => {
+  event.stopPropagation();
+  if (event.key === 'Enter') {
+    toggleChatInput();
     event.preventDefault();
   }
 });

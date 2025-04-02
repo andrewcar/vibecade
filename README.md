@@ -67,16 +67,16 @@ The arcade features designated poster slots for advertising and decoration:
   - Back row (cabinets 9-12): Vibe Synth, Pixel Paint, Retro Racer, and Pong
 - Dynamic neon lighting with pulsing effects
 - Background music system:
-  - Sequential playlist of ambient tracks
-  - Automatic track progression
-  - Seamless playlist looping
-  - Starts on first user interaction
-  - Low volume level (10%) for ambient atmosphere
-  - Debug logging for playback status
-  - Current playlist:
+  - Intelligent domain detection for production vs development
+  - Mobile-optimized audio playback
+  - Touch event support for mobile devices
+  - Automatic track progression with error recovery
+  - Debug logging for troubleshooting
+  - Volume set to 10% for ambient atmosphere
+  - Playlist:
+    - Neon Dreams
     - Fragmented Reverie
     - Fragments of Tomorrow
-    - Neon Dreams
     - Neon Shadows 2
     - Neon Shadows
     - Neon Skyline
@@ -462,6 +462,12 @@ The arcade features designated poster slots for advertising and decoration:
   - Real-time mobile detection and touch event logging
   - D-pad input state visualization
   - Helps diagnose issues with mobile controls across various devices
+- Audio Playback:
+  - Touch-based audio initialization
+  - Proper handling of mobile audio constraints
+  - Automatic domain detection for asset loading
+  - Error recovery for interrupted playback
+  - Debug logging for audio-related issues
 
 ### Microphone Toggle System
 - Dual microphone buttons optimized for each device type:
@@ -525,11 +531,14 @@ The arcade features designated poster slots for advertising and decoration:
 ## Troubleshooting
 
 ### Multiplayer Issues
-- Make sure the WebSocket server is running on port 3000 (`npm run server`)
-- Check that package.json has `"type": "module"` for ES module support
-- If connecting from mobile devices, use your computer's IP address (not localhost)
-- Verify both devices are on the same network
-- Check console logs for connection errors
+- The WebSocket server runs on https://vibecade.glitch.me
+- For local development:
+  - Run the server on port 3000 (`npm run server`)
+  - Server supports both HTTP and HTTPS modes
+  - HTTPS requires SSL certificates (set via environment variables)
+- Environment Variables for SSL:
+  - `SSL_KEY_PATH`: Path to SSL private key
+  - `SSL_CERT_PATH`: Path to SSL certificate
 - If server shows "address already in use" error, kill the existing process:
   ```bash
   # Find the process using port 3000
@@ -538,6 +547,16 @@ The arcade features designated poster slots for advertising and decoration:
   # Kill it using its PID
   kill <PID>
   ```
+
+### Server Configuration
+- The server automatically detects the environment and configures itself:
+  - Production: Uses HTTPS with SSL certificates
+  - Development: Falls back to HTTP if certificates aren't available
+- CORS is configured for:
+  - https://www.andrewos.com
+  - https://vibe.andrewos.com
+  - http://localhost:5173
+- Node.js version: 16.x (specified in package.json)
 
 ### Mobile Controls
 If mobile controls aren't working properly:
@@ -552,6 +571,7 @@ If mobile controls aren't working properly:
 - Socket.IO Client (v4.7.4)
 - Express (v4.18.3)
 - Vite (v3.2.7)
+- Node.js (v16.x)
 
 ## Featured Games
 
@@ -578,7 +598,7 @@ Second Row (9-16):
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v16.x)
 - npm or yarn
 
 ### Installation
@@ -598,17 +618,31 @@ yarn
 
 3. Start the development server:
 ```bash
+# Start the WebSocket server
+npm run server
+
+# In a separate terminal, start the Vite dev server
 npm run dev
-# or
-yarn dev
 ```
 
 4. Open your browser and navigate to `http://localhost:5173`
 
-## Building for Production
+### Production Setup
 
+1. Build the client:
 ```bash
 npm run build
 # or
 yarn build
 ```
+
+2. Configure SSL (if using HTTPS):
+- Set `SSL_KEY_PATH` environment variable to your SSL private key path
+- Set `SSL_CERT_PATH` environment variable to your SSL certificate path
+
+3. Start the production server:
+```bash
+npm start
+```
+
+The server will automatically detect the environment and use HTTPS if SSL certificates are available, falling back to HTTP if they're not.
