@@ -16,9 +16,11 @@ class MultiplayerManager {
         this.players = new Map();
         this.playerMeshes = new Map();
         this.lastUpdateTime = 0;
-        this.updateInterval = 50;
+        this.updateInterval = 500; // Increased from 100ms to 500ms
+        this.pendingUpdates = []; // Array to store pending movement updates
         
         this.setupSocketListeners();
+        this.setupUpdateBatching();
         console.log(`Multiplayer initialized with socket connection to ${serverUrl}`);
     }
 
@@ -116,6 +118,17 @@ class MultiplayerManager {
                 this.onPlayerInteraction(data);
             }
         });
+    }
+
+    setupUpdateBatching() {
+        // Send batched updates every 500ms
+        setInterval(() => {
+            if (this.pendingUpdates.length > 0) {
+                const latestUpdate = this.pendingUpdates[this.pendingUpdates.length - 1];
+                this.socket.emit('playerMove', latestUpdate);
+                this.pendingUpdates = [];
+            }
+        }, 500);
     }
 
     generateRandomSpawnPoint() {
@@ -218,22 +231,29 @@ class MultiplayerManager {
     }
 
     updatePlayerPosition(position, rotation) {
-        if (this.socket && this.isValidPosition(position)) {
-            const now = performance.now();
-            if (now - this.lastUpdateTime > this.updateInterval) {
-                // Ensure rotation is properly formatted
-                const formattedRotation = {
+        if (!this.socket || !this.isValidPosition(position)) return;
+
+        const now = Date.now();
+        if (now - this.lastUpdateTime < this.updateInterval) {
+            // If we're still within the update interval, just queue the update
+            this.pendingUpdates = [{  // Only keep the latest update
+                position,
+                rotation: {
                     x: rotation.x || 0,
                     y: rotation.y || 0,
                     z: rotation.z || 0
-                };
-                this.socket.emit('playerMove', { 
-                    position,
-                    rotation: formattedRotation,
-                    velocityY: window.velocityY || 0 // Add velocityY to sync data
-                });
-                this.lastUpdateTime = now;
-            }
+                },
+                velocityY: window.velocityY || 0
+            }];
+            return;
+        }
+
+        // If we've exceeded the interval, send the latest update
+        if (this.pendingUpdates.length > 0) {
+            const latestUpdate = this.pendingUpdates[this.pendingUpdates.length - 1];
+            this.socket.emit('playerMove', latestUpdate);
+            this.pendingUpdates = [];
+            this.lastUpdateTime = now;
         }
     }
 
@@ -245,8 +265,8 @@ class MultiplayerManager {
                 // Store previous position for movement detection
                 const previousPosition = player.currentPosition.clone();
                 
-                // Update position with lerp for smooth movement
-                const positionLerpFactor = Math.min(deltaTime * 10, 0.2);
+                // Enhanced interpolation with smoother lerp factor
+                const positionLerpFactor = Math.min(deltaTime * 15, 0.3); // Increased from 10 to 15 for smoother movement
                 player.currentPosition.lerp(player.targetPosition, positionLerpFactor);
                 
                 // Check if player is actually moving by comparing horizontal distance only
@@ -271,10 +291,10 @@ class MultiplayerManager {
                     player.currentPosition.y = 0;
                 }
 
-                // Handle jumping animation
+                // Handle jumping animation with smoother interpolation
                 if (player.velocityY) {
-                    // Apply gravity
-                    player.velocityY -= 9.8 * deltaTime;
+                    // Apply gravity with smoother interpolation
+                    player.velocityY = THREE.MathUtils.lerp(player.velocityY, -9.8 * deltaTime, 0.3);
                     // Update Y position
                     player.currentPosition.y += player.velocityY * deltaTime;
                     // Check for ground collision
@@ -287,8 +307,8 @@ class MultiplayerManager {
                 // Update mesh position
                 playerMesh.position.copy(player.currentPosition);
                 
-                // Update rotation with slerp for smooth rotation
-                const rotationLerpFactor = Math.min(deltaTime * 5, 0.1);
+                // Enhanced rotation interpolation
+                const rotationLerpFactor = Math.min(deltaTime * 8, 0.2); // Increased from 5 to 8 for smoother rotation
                 const currentQuaternion = new THREE.Quaternion().setFromEuler(player.currentRotation);
                 const targetQuaternion = new THREE.Quaternion().setFromEuler(player.targetRotation);
                 currentQuaternion.slerp(targetQuaternion, rotationLerpFactor);

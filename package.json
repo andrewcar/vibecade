@@ -1,6 +1,6 @@
 {
   "name": "vibecade",
-  "version": "1.0.16",
+  "version": "1.0.19",
   "description": "A retro-themed virtual arcade environment",
   "main": "server.js",
   "engines": {

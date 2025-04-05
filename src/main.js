@@ -2941,49 +2941,12 @@ const animate = () => {
     // Check if player is within range of the portal
     const portalDistance = playerPos.distanceTo(exitPortalGroup.position);
     
-    if (portalDistance < 5) {
-        console.log('Player position:', {
-            x: playerPos.x.toFixed(2),
-            y: playerPos.y.toFixed(2),
-            z: playerPos.z.toFixed(2)
-        });
-    }
-    
     if (portalDistance < 3) {
         // Check for intersection
         const doesIntersect = playerBox.intersectsBox(exitPortalBox);
-        console.log('Checking portal intersection:', doesIntersect);
-        
-        if (doesIntersect && !isRedirecting) {
-            isRedirecting = true; // Set flag to prevent multiple redirects
-            
-            // Prepare portal URL
-            const currentParams = new URLSearchParams(window.location.search);
-            const newParams = new URLSearchParams();
-            newParams.append('portal', 'true');
-            
-            // Use a default username if multiplayerManager.getUsername is not available
-            const username = (multiplayerManager && typeof multiplayerManager.getUsername === 'function') 
-                ? multiplayerManager.getUsername() 
-                : 'player' + Math.floor(Math.random() * 1000);
-            
-            newParams.append('username', username);
-            newParams.append('color', 'white');
-            newParams.append('speed', '5');
-            newParams.append('ref', window.location.href);
-
-            for (const [key, value] of currentParams) {
-                if (!['portal', 'username', 'color', 'speed', 'ref'].includes(key)) {
-                    newParams.append(key, value);
-                }
-            }
-            
-            const paramString = newParams.toString();
-            const nextPage = 'https://portal.pieter.com' + (paramString ? '?' + paramString : '');
-            
-            updateLog('Portal intersection detected! Redirecting...');
-            console.log('Redirecting to:', nextPage);
-            window.location.href = nextPage;
+        if (doesIntersect) {
+            // Handle portal interaction
+            handlePortalInteraction();
         }
     }
   }

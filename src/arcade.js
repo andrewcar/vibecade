@@ -1029,22 +1029,17 @@ export const createArcade = (scene, textureLoader) => {
   // Add version label
   const createVersionLabel = () => {
     const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 128;
-    const ctx = canvas.getContext('2d');
-
-    // Clear background
-    ctx.fillStyle = 'rgba(0,0,0,0)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+    const context = canvas.getContext('2d');
+    canvas.width = 256;
+    canvas.height = 64;
+    
+    // Set font and color
+    context.font = '32px "Press Start 2P"';
+    context.fillStyle = '#ffffff';
+    context.textAlign = 'left';
+    
     // Draw version text
-    ctx.fillStyle = '#ff00ff';  // Changed to match VIBECADE logo's magenta color
-    ctx.font = '36px "Press Start 2P"';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.shadowColor = '#ff00ff';  // Added shadow to match logo glow
-    ctx.shadowBlur = 40;  // Match logo's glow effect
-    ctx.fillText('1.0.16', canvas.width/2, canvas.height/2);  // Updated to 1.0.16
+    context.fillText('v1.0.19', 10, 40);
 
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshBasicMaterial({

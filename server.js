@@ -97,12 +97,19 @@ io.on('connection', (socket) => {
         if (player) {
             player.position = data.position;
             player.rotation = data.rotation;
-            socket.broadcast.emit('playerMoved', {
-                id: socket.id,
-                position: data.position,
-                rotation: data.rotation,
-                velocityY: data.velocityY
-            });
+            
+            // Broadcast to players in batches using a Set to track who needs updates
+            const recipients = new Set(Array.from(players.keys()));
+            recipients.delete(socket.id); // Don't send to self
+            
+            if (recipients.size > 0) {
+                socket.broadcast.emit('playerMoved', {
+                    id: socket.id,
+                    position: data.position,
+                    rotation: data.rotation,
+                    velocityY: data.velocityY
+                });
+            }
         }
     });
 
