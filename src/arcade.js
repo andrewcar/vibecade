@@ -206,29 +206,37 @@ export const createArcade = (scene, textureLoader) => {
   });
 
   // Create neon line materials (reusable for all lines)
-  const neonYellowMaterial = new THREE.MeshBasicMaterial({
+  const neonYellowMaterial = new THREE.MeshStandardMaterial({
     color: 0xffff00,
     emissive: 0xffff00,
-    emissiveIntensity: 3.0
+    emissiveIntensity: 3.0,
+    metalness: 0.5,
+    roughness: 0.2
   });
 
-  const neonBlueMaterial = new THREE.MeshBasicMaterial({
+  const neonBlueMaterial = new THREE.MeshStandardMaterial({
     color: 0x0000ff,
     emissive: 0x0000ff,
-    emissiveIntensity: 3.0
+    emissiveIntensity: 3.0,
+    metalness: 0.5,
+    roughness: 0.2
   });
 
   // New continuous line materials
-  const continuousYellowMaterial = new THREE.MeshBasicMaterial({
+  const continuousYellowMaterial = new THREE.MeshStandardMaterial({
     color: 0xffff00,
     emissive: 0xffff00,
-    emissiveIntensity: 3.0
+    emissiveIntensity: 3.0,
+    metalness: 0.5,
+    roughness: 0.2
   });
 
-  const continuousOrangeMaterial = new THREE.MeshBasicMaterial({
+  const continuousOrangeMaterial = new THREE.MeshStandardMaterial({
     color: 0xff8c00,
     emissive: 0xff8c00,
-    emissiveIntensity: 3.0
+    emissiveIntensity: 3.0,
+    metalness: 0.5,
+    roughness: 0.2
   });
 
   // Function to create continuous lines for a wall
@@ -1036,7 +1044,7 @@ export const createArcade = (scene, textureLoader) => {
     ctx.textBaseline = 'middle';
     ctx.shadowColor = '#ff00ff';  // Added shadow to match logo glow
     ctx.shadowBlur = 40;  // Match logo's glow effect
-    ctx.fillText('1.0.15', canvas.width/2, canvas.height/2);  // Updated to 1.0.15
+    ctx.fillText('1.0.16', canvas.width/2, canvas.height/2);  // Updated to 1.0.16
 
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshBasicMaterial({
