@@ -652,34 +652,24 @@ The server will automatically detect the environment and use HTTPS if SSL certif
 
 ### Publishing
 
-To publish updates to andrewos.com/vibe:
+To publish updates to andrewos.com/vibe (source of truth: this repo; site lives in a separate andrewOS checkout):
 
-1. Update version numbers:
-   ```bash
-   # Update version in package.json
-   # Update version in src/arcade.js (in createVersionLabel function)
-   ```
+1. Bump `version` in `package.json` (in-world label imports it via `arcade.js`).
 
-2. Build the project:
+2. Build:
    ```bash
    npm run build
    ```
 
-3. Copy the built files to the andrewOS repository:
+3. Copy only the new hashed bundle into the andrewOS repo and point the script tag at it:
    ```bash
-   # Clone andrewOS if you haven't already
-   git clone https://github.com/andrewcar/andrewOS.git andrewos-fresh
-   
-   # Copy built files to the vibe directory
-   cp -r dist/* andrewos-fresh/vibe/
+   # example paths — use your local andrewOS checkout
+   HASH=$(basename dist/assets/index.*.js)
+   cp "dist/assets/$HASH" "/path/to/andrewos/vibe/assets/$HASH"
+   # update the script src hash in andrewos/vibe/index.html only
+   # (do not overwrite that HTML wholesale from dist/index.html)
    ```
 
-4. Commit and push the changes:
-   ```bash
-   cd andrewos-fresh
-   git add vibe/
-   git commit -m "Update vibe to version X.Y.Z"
-   git push
-   ```
+4. In the andrewOS repo, commit `vibe/assets/` + `vibe/index.html` (and fonts if needed) and push.
 
-The changes will be live at andrewos.com/vibe once the push is complete.
+The changes will be live at andrewos.com/vibe once andrewOS is pushed.
