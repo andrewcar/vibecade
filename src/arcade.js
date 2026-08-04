@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import config from '../config.json';
+import { version as APP_VERSION } from '../package.json';
 
 /**
  * Creates the arcade environment with walls, floor, and ceiling
@@ -1038,8 +1039,8 @@ export const createArcade = (scene, textureLoader) => {
     context.fillStyle = '#ffffff';
     context.textAlign = 'left';
     
-    // Draw version text
-    context.fillText('v1.0.19', 10, 40);
+    // Draw version text (from package.json — bump there to update the in-world label)
+    context.fillText(`v${APP_VERSION}`, 10, 40);
 
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshBasicMaterial({

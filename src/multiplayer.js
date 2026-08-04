@@ -10,9 +10,15 @@ class MultiplayerManager {
                            window.location.hostname === 'www.andrewos.com';
         const serverUrl = isProduction
             ? 'https://vibecade.glitch.me'  // Glitch WebSocket server
-            : `https://${window.location.hostname}:3000`;  // Development server
+            : `http://${window.location.hostname}:3000`;  // Local multiplayer server
             
-        this.socket = io(serverUrl);
+        // Limit reconnect spam when the local socket server isn't running (static preview)
+        this.socket = io(serverUrl, {
+            reconnectionAttempts: isProduction ? Infinity : 2,
+            reconnectionDelay: 2000,
+            timeout: 4000,
+            transports: ['websocket', 'polling']
+        });
         this.players = new Map();
         this.playerMeshes = new Map();
         this.lastUpdateTime = 0;

@@ -13,7 +13,7 @@ export const createLighting = (scene) => {
   // Directional light for general illumination
   const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
   directionalLight.position.set(0, 10, 5);
-  directionalLight.castShadow = true;
+  directionalLight.castShadow = false;
   directionalLight.shadow.mapSize.width = 1024;
   directionalLight.shadow.mapSize.height = 1024;
   directionalLight.shadow.camera.near = 0.5;
@@ -53,7 +53,7 @@ export const createLighting = (scene) => {
       positions[index].y,
       positions[index].z
     );
-    pointLight.castShadow = true;
+    pointLight.castShadow = false;
     pointLight.shadow.mapSize.width = 512;
     pointLight.shadow.mapSize.height = 512;
     
@@ -73,7 +73,7 @@ export const createLighting = (scene) => {
       const spotlight = new THREE.SpotLight(0xffffff, 1, 10, Math.PI / 6, 0.5, 1);
       spotlight.position.set(position.x, 3.8, position.z);
       spotlight.target.position.set(position.x, 0, position.z);
-      spotlight.castShadow = true;
+      spotlight.castShadow = false;
       spotlight.shadow.mapSize.width = 512;
       spotlight.shadow.mapSize.height = 512;
       

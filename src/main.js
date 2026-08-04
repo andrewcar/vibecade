@@ -12,6 +12,29 @@ import { MultiplayerManager } from './multiplayer.js';
 import { createPlayerModel } from './playerModel.js';
 import { WalletUI } from './wallet.js';
 
+const PRESS_START_FONT_URL = (typeof window !== 'undefined' && window.location.pathname.includes('/vibe'))
+  ? '/vibe/fonts/press-start-2p.woff2'
+  : '/fonts/press-start-2p.woff2';
+
+/** Safari often won't use @font-face in canvas until FontFace is explicitly loaded/added. */
+const pressStartFontReady = (async () => {
+  try {
+    if (document.fonts?.check?.('32px "Press Start 2P"')) return true;
+    const face = new FontFace('Press Start 2P', `url(${PRESS_START_FONT_URL})`, {
+      style: 'normal',
+      weight: '400',
+      display: 'swap'
+    });
+    const loaded = await face.load();
+    document.fonts.add(loaded);
+    await document.fonts.load('32px "Press Start 2P"');
+    await document.fonts.ready;
+    return document.fonts.check('32px "Press Start 2P"');
+  } catch (_) {
+    return false;
+  }
+})();
+
 // Initialize music player
 const musicPlayer = {
   currentTrack: 0,
@@ -192,7 +215,156 @@ euler.setFromQuaternion(camera.quaternion);
 
 // Controls
 const controls = new PointerLockControls(camera, canvas);
-controls.getObject().rotation.y = -Math.PI/2; // Ensure controls match camera's initial rotation
+controls.object.rotation.y = -Math.PI/2; // Ensure controls match camera's initial rotation
+
+// Play / look mode (pointer lock when available, soft-lock fallback otherwise)
+let isPlaying = false;
+let pointerLockUnavailable = false;
+let fallbackLastMouseX = 0;
+let fallbackLastMouseY = 0;
+let hasFallbackMouseSample = false;
+// Desktop look feel — PointerLockControls uses movement * 0.002 * pointerSpeed
+const DESKTOP_LOOK_SENSITIVITY = 0.005;
+// Safari reports smaller movementX/Y for the same physical mouse motion
+const isSafariBrowser = (() => {
+  const ua = navigator.userAgent || '';
+  return /Safari/i.test(ua) && !/Chrome|Chromium|CriOS|Edg|Firefox|Android/i.test(ua);
+})();
+const SAFARI_LOOK_BOOST = 2.6;
+const LOOK_SENSITIVITY = DESKTOP_LOOK_SENSITIVITY * (isSafariBrowser ? SAFARI_LOOK_BOOST : 1);
+controls.pointerSpeed = LOOK_SENSITIVITY / 0.002;
+
+const startOverlay = document.getElementById('click-to-start');
+const playCapture = document.getElementById('play-capture');
+const controlsInfo = document.querySelector('.controls-info');
+
+const applyLookDelta = (dx, dy) => {
+  if (!isPlaying || controls.isLocked) return;
+  if (typeof isMobileDevice === 'function' && isMobileDevice()) return;
+  if (typeof isThirdPerson !== 'undefined' && isThirdPerson) return;
+  if (!dx && !dy) return;
+
+  const lookEuler = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
+  lookEuler.y -= dx * LOOK_SENSITIVITY;
+  lookEuler.x -= dy * LOOK_SENSITIVITY;
+  lookEuler.x = Math.max(-Math.PI / 3, Math.min(Math.PI / 4, lookEuler.x));
+  lookEuler.z = 0;
+  camera.quaternion.setFromEuler(lookEuler);
+};
+
+const setPlayingCursor = (playing) => {
+  document.documentElement.classList.toggle('playing', playing);
+  const cursor = playing ? 'none' : '';
+  document.documentElement.style.cursor = cursor;
+  document.body.style.cursor = cursor;
+  canvas.style.cursor = cursor;
+  if (playCapture) {
+    playCapture.style.cursor = cursor;
+    // Never steal clicks from cabinets / UI — soft-lock only hides the cursor
+    playCapture.style.pointerEvents = 'none';
+  }
+};
+
+const showStartOverlay = () => {
+  if (startOverlay) {
+    startOverlay.classList.add('visible');
+    startOverlay.setAttribute('aria-hidden', 'false');
+  }
+  if (controlsInfo) controlsInfo.style.display = 'none';
+};
+
+const hideStartOverlay = () => {
+  if (startOverlay) {
+    startOverlay.classList.remove('visible');
+    startOverlay.setAttribute('aria-hidden', 'true');
+  }
+};
+
+const revealStartOverlayWhenReady = async () => {
+  if (typeof isMobileDevice === 'function' && isMobileDevice()) return;
+  try {
+    if (document.fonts?.load) {
+      await document.fonts.load('24px "Press Start 2P"');
+      await document.fonts.ready;
+    }
+  } catch (_) {
+    // Still reveal if Font Loading API is unavailable
+  }
+  showStartOverlay();
+};
+
+const lockWarning = document.getElementById('lock-warning');
+
+
+const showLockWarning = (show) => {
+  if (!lockWarning) return;
+  lockWarning.classList.toggle('visible', !!show);
+};
+
+const requestCanvasPointerLock = () => {
+  if (!canvas.requestPointerLock) {
+    pointerLockUnavailable = true;
+    showLockWarning(true);
+    return null;
+  }
+  // CRITICAL: call synchronously as the first gesture action (no awaits before this)
+  try {
+    const lockResult = canvas.requestPointerLock();
+    if (lockResult && typeof lockResult.then === 'function') {
+      lockResult.then(() => {
+        showLockWarning(false);
+      }).catch((err) => {
+        pointerLockUnavailable = true;
+        showLockWarning(true);
+      });
+    } else {
+    }
+    return lockResult;
+  } catch (err) {
+    pointerLockUnavailable = true;
+    showLockWarning(true);
+    return null;
+  }
+};
+
+const enterPlayMode = () => {
+  if (isMobileDevice()) return;
+
+  // Request pointer lock FIRST while the user-gesture token is still valid
+  const lockResult = requestCanvasPointerLock();
+
+  isPlaying = true;
+  hasFallbackMouseSample = false;
+  hideStartOverlay();
+  setPlayingCursor(true);
+  if (playCapture) playCapture.classList.add('active');
+  if (controlsInfo) {
+    controlsInfo.style.display = 'block';
+    controlsInfo.textContent = 'WASD move · mouse look · ESC release';
+  }
+  canvas.focus();
+  window.focus();
+};
+
+const exitPlayMode = () => {
+  if (!isPlaying) {
+    setPlayingCursor(false);
+    if (playCapture) playCapture.classList.remove('active');
+    showStartOverlay();
+    return;
+  }
+  isPlaying = false;
+  hasFallbackMouseSample = false;
+  setPlayingCursor(false);
+  showLockWarning(false);
+  if (playCapture) playCapture.classList.remove('active');
+  if (document.pointerLockElement) {
+    try { document.exitPointerLock(); } catch (_) {}
+  } else if (controls.isLocked) {
+    try { controls.unlock(); } catch (_) {}
+  }
+  showStartOverlay();
+};
 
 // Movement
 const velocity = new THREE.Vector3();
@@ -227,6 +399,7 @@ const pollKeyboardState = () => {
   moveBackward = window.getKey('KeyS');
   moveLeft = window.getKey('KeyA');
   moveRight = window.getKey('KeyD');
+
   
   // Handle jumping through global key state
   if (window.getKey('Space') && canJump) {
@@ -673,30 +846,83 @@ window.addEventListener('load', () => {
 // Focus the window immediately to capture keyboard events
 window.focus();
 
-// Add click handler for pointer lock
-canvas.addEventListener('click', () => {
-  controls.lock();
+// Start / release play mode
+const beginPlayFromGesture = (event) => {
+  if (isMobileDevice()) return;
+  if (isPlaying && document.pointerLockElement === canvas) return;
+  if (event && event.button != null && event.button !== 0) return;
+  enterPlayMode();
+};
+
+if (startOverlay) {
+  // pointerdown keeps transient activation more reliably than click
+  startOverlay.addEventListener('pointerdown', beginPlayFromGesture);
+  startOverlay.addEventListener('click', beginPlayFromGesture);
+}
+canvas.addEventListener('pointerdown', (event) => {
+  if (isMobileDevice()) return;
+  if (!isPlaying) beginPlayFromGesture(event);
+});
+canvas.addEventListener('click', (event) => {
+  if (isMobileDevice()) return;
+  if (!isPlaying) beginPlayFromGesture(event);
 });
 
-// Add automatic focus to the canvas to make WASD controls work immediately
+document.addEventListener('pointerlockerror', () => {
+  pointerLockUnavailable = true;
+});
+
+document.addEventListener('pointerlockchange', () => {
+});
+
+window.addEventListener('mousemove', (event) => {
+  if (!isPlaying || controls.isLocked || isMobileDevice()) return;
+  if (typeof isThirdPerson !== 'undefined' && isThirdPerson) return;
+
+  let dx = 0;
+  let dy = 0;
+  if (hasFallbackMouseSample) {
+    dx = event.clientX - fallbackLastMouseX;
+    dy = event.clientY - fallbackLastMouseY;
+  } else if (event.movementX || event.movementY) {
+    dx = event.movementX;
+    dy = event.movementY;
+  }
+  fallbackLastMouseX = event.clientX;
+  fallbackLastMouseY = event.clientY;
+  hasFallbackMouseSample = true;
+  applyLookDelta(dx, dy);
+});
+
+window.addEventListener('keydown', (event) => {
+  if (event.code === 'Escape' && isPlaying) {
+    event.preventDefault();
+    exitPlayMode();
+  }
+});
+
 window.addEventListener('load', () => {
   canvas.focus();
   window.focus();
 });
+revealStartOverlayWhenReady();
 
-// Modify pointer lock event handlers
 controls.addEventListener('lock', () => {
-  document.querySelector('.controls-info').style.display = 'none';
-  // Ensure keyboard events are captured when pointer is locked
+  isPlaying = true;
+  pointerLockUnavailable = false;
+  showLockWarning(false);
+  hideStartOverlay();
+  setPlayingCursor(true);
+  if (playCapture) playCapture.classList.add('active');
+  if (controlsInfo) controlsInfo.style.display = 'none';
   canvas.focus();
   window.focus();
 });
 
 controls.addEventListener('unlock', () => {
-  document.querySelector('.controls-info').style.display = 'block';
-  // Ensure keyboard events are captured when pointer is unlocked
-  canvas.focus();
-  window.focus();
+  // User hit Esc / lost lock — return to start screen unless soft-lock still wanted.
+  // Browser unlock from Esc should exit play mode entirely.
+  if (isPlaying) exitPlayMode();
 });
 
 // Renderer
@@ -705,10 +931,10 @@ const renderer = new THREE.WebGLRenderer({
   antialias: true,
   powerPreference: 'high-performance'
 });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+// Shadows are expensive and most arcade materials are unlit MeshBasicMaterial
+renderer.shadowMap.enabled = false;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 // Create arcade environment
@@ -734,7 +960,7 @@ window.addEventListener('resize', () => {
 
   // Update renderer
   renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
 });
 
 // Clock
@@ -2262,16 +2488,33 @@ console.log('Exit portal created at position:', {
     z: exitPortalGroup.position.z
 });
 
-// Add portal label
+// Add portal label (size canvas from measured text so Press Start 2P does not clip)
 const portalCanvas = document.createElement('canvas');
 const portalContext = portalCanvas.getContext('2d');
-portalCanvas.width = 512;
-portalCanvas.height = 64;
-portalContext.fillStyle = '#00ff00';
-portalContext.font = 'bold 32px "Press Start 2P"';
-portalContext.textAlign = 'center';
-portalContext.fillText('VIBEVERSE PORTAL', portalCanvas.width/2, portalCanvas.height/2);
 const portalTexture = new THREE.CanvasTexture(portalCanvas);
+const paintPortalLabel = () => {
+  const text = 'VIBEVERSE PORTAL';
+  portalCanvas.height = 64;
+  portalContext.font = '32px "Press Start 2P"';
+  const padX = 24;
+  const measured = Math.ceil(portalContext.measureText(text).width) + padX * 2;
+  portalCanvas.width = Math.max(512, measured);
+  // Resizing canvas resets context state
+  portalContext.clearRect(0, 0, portalCanvas.width, portalCanvas.height);
+  portalContext.fillStyle = '#00ff00';
+  portalContext.font = '32px "Press Start 2P"';
+  portalContext.textAlign = 'center';
+  portalContext.textBaseline = 'middle';
+  portalContext.fillText(text, portalCanvas.width / 2, portalCanvas.height / 2);
+  portalTexture.needsUpdate = true;
+};
+paintPortalLabel();
+pressStartFontReady.then((ok) => {
+  if (ok) paintPortalLabel();
+}).catch(() => {});
+if (document.fonts?.load) {
+  document.fonts.load('32px "Press Start 2P"').then(() => paintPortalLabel()).catch(() => {});
+}
 const labelGeometry = new THREE.PlaneGeometry(3, 0.5);
 const labelMaterial = new THREE.MeshBasicMaterial({
     map: portalTexture,
@@ -2652,9 +2895,10 @@ document.addEventListener('mousemove', (event) => {
     // Only change rotation based on mouse movement when in third person
     mouseX = event.movementX;
     mouseY = event.movementY;
-   
+    const thirdPersonLook = LOOK_SENSITIVITY;
+
     // Update target body rotation based on mouse movement
-    targetBodyRotation -= mouseX * 0.005;
+    targetBodyRotation -= mouseX * thirdPersonLook;
     
     // Normalize the rotation to be between -PI and PI
     targetBodyRotation = targetBodyRotation % (2 * Math.PI);
@@ -2665,7 +2909,7 @@ document.addEventListener('mousemove', (event) => {
     }
     
     // Update target pitch based on vertical mouse movement (clamped to prevent over-rotation)
-    targetPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 4, targetPitch - mouseY * 0.005));
+    targetPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 4, targetPitch - mouseY * thirdPersonLook));
   }
 });
 
@@ -2677,13 +2921,53 @@ const wallet = new WalletUI();
 wallet.loadCoins();
 
 // Modify the animate function to include multiplayer updates
+let fpsFrames = 0;
+let fpsLastMs = performance.now();
+let fpsValue = 0;
+let lookDegAccum = 0;
+let lastLookEuler = null;
+const lookEulerScratch = new THREE.Euler();
+
 const animate = () => {
   const elapsedTime = clock.getElapsedTime();
-  const deltaTime = elapsedTime - previousTime;
+  const deltaTime = Math.min(0.05, elapsedTime - previousTime);
   previousTime = elapsedTime;
 
+  // Track actual camera look motion (°/s) — works for pointer-lock and soft-lock
+  lookEulerScratch.setFromQuaternion(camera.quaternion, 'YXZ');
+  if (lastLookEuler && isPlaying) {
+    let dyaw = lookEulerScratch.y - lastLookEuler.y;
+    let dpitch = lookEulerScratch.x - lastLookEuler.x;
+    while (dyaw > Math.PI) dyaw -= Math.PI * 2;
+    while (dyaw < -Math.PI) dyaw += Math.PI * 2;
+    lookDegAccum += (Math.abs(dyaw) + Math.abs(dpitch)) * (180 / Math.PI);
+  }
+  if (!lastLookEuler) lastLookEuler = new THREE.Euler();
+  lastLookEuler.copy(lookEulerScratch);
+
+  // FPS + LOOK HUD (shared top-right row with coin wallet)
+  fpsFrames += 1;
+  const nowMs = performance.now();
+  if (nowMs - fpsLastMs >= 500) {
+    const windowSec = (nowMs - fpsLastMs) / 1000;
+    fpsValue = Math.round((fpsFrames * 1000) / (nowMs - fpsLastMs));
+    const lookRate = Math.round(lookDegAccum / Math.max(windowSec, 0.001));
+    fpsFrames = 0;
+    lookDegAccum = 0;
+    fpsLastMs = nowMs;
+    if (typeof wallet !== 'undefined' && wallet) {
+      if (wallet.setFps) wallet.setFps(fpsValue);
+      if (wallet.setLook) wallet.setLook(lookRate);
+    }
+  }
+
   // Poll keyboard state to ensure movement flags are up-to-date
-  pollKeyboardState();
+  if (isPlaying || isMobileDevice()) {
+    pollKeyboardState();
+  } else {
+    moveForward = moveBackward = moveLeft = moveRight = false;
+  }
+
 
   // Find the Pong cabinet and update its screen flash animation
   const pongCabinet = cabinets.find(cabinet => cabinet.userData.id === 'pong');
@@ -2831,21 +3115,20 @@ const animate = () => {
     const movementSpeed = 5.0;
 
     // Different movement depending on state
-    if (isMobileDevice()) {
-      // Mobile movement
+    const tryingMove = moveForward || moveBackward || moveLeft || moveRight;
+    if (isMobileDevice() || !controls.isLocked) {
+      // Camera-relative movement (mobile, or desktop soft-lock / unlocked)
       const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
       const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+      forward.y = 0;
+      right.y = 0;
+      forward.normalize();
+      right.normalize();
 
       if (moveForward) camera.position.addScaledVector(forward, movementSpeed * deltaTime);
       if (moveBackward) camera.position.addScaledVector(forward, -movementSpeed * deltaTime);
       if (moveLeft) camera.position.addScaledVector(right, -movementSpeed * deltaTime);
       if (moveRight) camera.position.addScaledVector(right, movementSpeed * deltaTime);
-    } else if (!controls.isLocked) {
-      // Handle movement before pointer lock using fixed directions
-      if (moveForward) camera.position.z -= movementSpeed * deltaTime;
-      if (moveBackward) camera.position.z += movementSpeed * deltaTime;
-      if (moveLeft) camera.position.x -= movementSpeed * deltaTime;
-      if (moveRight) camera.position.x += movementSpeed * deltaTime;
     } else {
       // Normal pointer lock controls
       if (moveForward || moveBackward) velocity.z -= direction.z * 25.0 * deltaTime;
@@ -2855,10 +3138,14 @@ const animate = () => {
       controls.moveForward(-velocity.z * deltaTime);
     }
 
+    const afterMove = camera.position.clone();
     // Check collisions and revert if needed
-    if (checkCabinetCollisions()) {
+    const collided = checkCabinetCollisions();
+    if (collided) {
       camera.position.copy(oldPosition);
     }
+
+
 
     // Apply gravity
     window.velocityY -= gravity * deltaTime;
@@ -2997,6 +3284,8 @@ let touchStartY = 0;
 let isTouchRotating = false;
 let lastTouchX = 0;
 let lastTouchY = 0;
+// 25% more sensitive than the previous 0.004 multiplier
+const TOUCH_LOOK_SENSITIVITY = 0.005;
 let cameraRotation = new THREE.Euler(0, -Math.PI/2, 0, 'YXZ'); // Start with initial camera rotation
 
 // Create quaternions for rotation
@@ -3036,8 +3325,8 @@ canvas.addEventListener('touchmove', (e) => {
   const touchY = e.touches[0].clientY;
   
   // Calculate movement based on difference from LAST position, not start position
-  const movementX = (touchX - lastTouchX) * 0.004; // Increased horizontal sensitivity
-  const movementY = (touchY - lastTouchY) * 0.004; // Increased vertical sensitivity
+  const movementX = (touchX - lastTouchX) * TOUCH_LOOK_SENSITIVITY;
+  const movementY = (touchY - lastTouchY) * TOUCH_LOOK_SENSITIVITY;
   
   if (isThirdPerson) {
     // Update target body rotation for third person (only yaw)
@@ -3083,6 +3372,15 @@ canvas.addEventListener('touchend', (e) => {
     cameraRotation.setFromQuaternion(camera.quaternion, 'YXZ');
   }
 }, { passive: false });
+
+// Test/debug hook — used by Playwright pan-sensitivity checks
+window.__vibecadeDebug = {
+  touchLookSensitivity: TOUCH_LOOK_SENSITIVITY,
+  getCameraYawPitch() {
+    const e = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
+    return { yaw: e.y, pitch: e.x };
+  },
+};
 
 // Add socket listeners for Pong game state changes
 multiplayerManager.socket.on('pongGamesState', (games) => {

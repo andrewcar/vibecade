@@ -36,7 +36,10 @@ export function createPlayerModel(bodyColor = 0x3366cc) {
     
     // Preload font
     let fontLoaded = false;
-    const font = new FontFace('Press Start 2P', 'url(https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff2)');
+    const fontUrl = window.location.pathname.includes('/vibe')
+      ? '/vibe/fonts/press-start-2p.woff2'
+      : '/fonts/press-start-2p.woff2';
+    const font = new FontFace('Press Start 2P', `url(${fontUrl})`);
     font.load().then(() => {
         document.fonts.add(font);
         fontLoaded = true;
